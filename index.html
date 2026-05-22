@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Livestock Nutrition: Complete Lectures 1–7 | Modern Study Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f3f9ef 0%, #e2ecd9 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: #1a2c16;
+            padding: 2rem 1.5rem;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* header */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2b6e2a, #4c9e46);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+        .hero p {
+            font-size: 1.1rem;
+            color: #3a5734;
+            border-bottom: 2px solid #c0ddb0;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+
+        /* toggle all button */
+        .toggle-all-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 1.8rem;
+        }
+        .btn-toggle {
+            background: #2b6e2a;
+            border: none;
+            padding: 0.65rem 1.8rem;
+            border-radius: 60px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            backdrop-filter: blur(2px);
+        }
+        .btn-toggle:hover {
+            background: #1e551d;
+            transform: scale(0.97);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* lecture grid */
+        .lecture-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* modern card */
+        .lecture-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(0px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            transition: all 0.25s ease-out;
+            border: 1px solid rgba(140, 190, 100, 0.4);
+            overflow: hidden;
+        }
+        .lecture-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 28px 38px -14px rgba(0, 0, 0, 0.2);
+        }
+
+        .lecture-header {
+            background: #ffffffea;
+            padding: 1.2rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #cbe5bc;
+            transition: background 0.2s;
+        }
+        .lecture-header:hover {
+            background: #f9fff5;
+        }
+        .lecture-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #1c4f1a;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .lecture-icon {
+            font-size: 1.8rem;
+        }
+        .lecture-badge {
+            background: #d9f0ce;
+            color: #2a631f;
+            padding: 0.3rem 1rem;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .lecture-content {
+            padding: 1.8rem 2rem 2.2rem;
+            display: none;
+            border-top: none;
+            background: #ffffff;
+            animation: fadeSlide 0.3s ease-out;
+        }
+        .lecture-content.show {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(-8px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        /* modern visual cards inside */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.8rem 0;
+        }
+        .info-panel {
+            background: #fafef5;
+            border-radius: 1.5rem;
+            padding: 1.3rem 1.4rem;
+            border-left: 6px solid #6fa83d;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.02);
+            transition: 0.15s;
+        }
+        .info-panel h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.7rem;
+            color: #2c5e29;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tree-modern {
+            background: #fef9e3;
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.5rem;
+            margin: 1.5rem 0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.55;
+            white-space: pre-wrap;
+            border: 1px solid #e9e2b3;
+            color: #2d3b1f;
+        }
+
+        .fact-badge {
+            background: #eef3e9;
+            border-radius: 1rem;
+            padding: 0.6rem 1rem;
+            font-weight: 500;
+            margin: 0.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            margin: 1.5rem 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        th {
+            background: #deeccf;
+            padding: 12px 14px;
+            font-weight: 600;
+            color: #1e421b;
+        }
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #e1ecd4;
+        }
+        .highlight {
+            background: #f9eec1;
+            padding: 0.1rem 0.3rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .footnote {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #587a4a;
+            border-top: 1px solid #c2ddb2;
+            padding-top: 1.8rem;
+        }
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .lecture-title { font-size: 1.3rem; }
+            .lecture-header { padding: 1rem 1.2rem; }
+            .lecture-content { padding: 1.2rem; }
+            .insight-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🐄 Livestock Feed & Nutrition</h1>
+        <p>📖 Complete Lectures 1–7 • Visual summaries • Exam smart notes</p>
+    </div>
+    <div class="toggle-all-wrapper">
+        <button class="btn-toggle" id="toggleAllBtn">📂 Expand all lectures</button>
+    </div>
+    <div class="lecture-grid" id="lectureGrid">
+        
+        <!-- LECTURE 01 -->
+        <div class="lecture-card">
+            <div class="lecture-header">
+                <div class="lecture-title"><span class="lecture-icon">🌿</span> Lecture 01: Feed Resources & Forage Conservation</div>
+                <div class="lecture-badge">Core classification • TDN • roughages</div>
+            </div>
+            <div class="lecture-content">
+                <div class="info-panel">
+                    <h3>📘 Nutrition & definitions</h3>
+                    <p><strong>Nutrition:</strong> Interprets relationship between nutrients & organisms (ingestion → digestion → absorption → metabolism → excretion). Important for growth, production, reproduction.<br>
+                    <strong>Feed vs Food:</strong> Feed = single component (green forage). Food = mixture (green forage + wanda + straw).</p>
+                </div>
+                <div class="tree-modern">
+                    <strong>🗺️ FEED RESOURCES MAP</strong><br>
+                    ├─ ROUGHAGES (crude fiber ↑, TDN ↓)<br>
+                    │   ├─ Green roughages: Legumes (Berseem, Lucern) / Non-legumes (Bajra, Maize, Sorghum, Oat)<br>
+                    │   └─ Dry roughages: Wheat straw, Rice polish, Hay<br>
+                    ├─ CONCENTRATES (TDN ↑)<br>
+                    │   ├─ Energy rich: Cereal grains (plant), Fat (animal)<br>
+                    │   └─ Protein rich: Soybean meal, Cottonseed cake (plant); Fish meal, Blood meal (animal)<br>
+                    ├─ AGRO-INDUSTRIAL BYPRODUCTS: Bagasse, Sugarcane toppings, Molasses, Sugarbeet pulp<br>
+                    └─ FEED ADDITIVES: Nutritional (vitamins), Non-nutritional (colors, binders), Antibiotics
+                </div>
+                <div class="insight-grid">
+                    <div class="info-panel"><h3>🔧 Key terms</h3>✔ <strong>Cake</strong> = oil extraction (mechanical)<br>✔ <strong>Meal</strong> = oil extraction (chemical)<br>✔ <strong>TDN</strong> = Total Digestible Nutrients</div>
+                    <div class="info-panel"><h3>🧪 3 types of digestion</h3>1. Chemical &nbsp;2. Mechanical &nbsp;3. Microbial</div>
+                </div>
+                <table>
+                    <thead><tr><th>Category</th><th>Examples</th></tr></thead>
+                    <tbody>
+                        <tr><td>Legumes</td><td>Berseem, Lucern</td></tr>
+                        <tr><td>Non-legumes</td><td>Bajra, Maize, Sorghum, Oat</td></tr>
+                        <tr><td>Dry roughages</td><td>Wheat straw, Hay</td></tr>
+                        <tr><td>Protein concentrates (plant)</td><td>Soybean meal, Cottonseed cake</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- LECTURE 02 -->
+        <div class="lecture-card">
+            <div class="lecture-header">
+                <div class="lecture-title"><span class="lecture-icon">🌡️</span> Lecture 02: Factors Affecting Intake & Digestion</div>
+                <div class="lecture-badge">21 factors • chick temperature table</div>
+            </div>
+            <div class="lecture-content">
+                <div class="insight-grid">
+                    <div class="info-panel"><h3>⬆️ Increases intake</h3>Low temperature, more leaves, small particle size, more exercise, female gender, good health, low stress, proper storage</div>
+                    <div class="info-panel"><h3>⬇️ Decreases intake</h3>High stress, disease, high herd density, vaccination period, anti-nutritional factors (aflatoxin), large particle size</div>
+                </div>
+                <div class="tree-modern">
+                    <strong>📋 Full list (21 factors)</strong><br>
+                    Age, breed/species, weight, gender (female > male), stem/leaf ratio (more leaf ↑), exercise, feeding intervals, individual ability, temperature (low = ↑), stress, feeding system, disease, particle size, vaccination, water (cattle 50L, 2:1), light, storage, high protein/energy, anti-nutritional factors (aflatoxin, ochratoxin), herd density (competition ↓).
+                </div>
+                <table>
+                    <thead><tr><th>🐣 Chick week</th><th>°F</th></tr></thead>
+                    <tbody>
+                        <tr><td>Week 1</td><td>95°F</td></tr>
+                        <tr><td>Week 2</td><td>90°F</td></tr>
+                        <tr><td>Week 3</td><td>85°F</td></tr>
+                        <tr><td>Week 4</td><td>80°F</td></tr>
+                        <tr><td>Week 5</td><td>75°F</td></tr>
+                        <tr><td>Week 6</td><td>70°F</td></tr>
+                    </tbody>
+                </table>
+                <div class="fact-badge">💧 Water: Cattle 50 litres/day, moisture:dry matter 2:1. Poultry feed:water 2:1.</div>
+            </div>
+        </div>
+
+        <!-- LECTURE 03 -->
+        <div class="lecture-card">
+            <div class="lecture-header">
+                <div class="lecture-title"><span class="lecture-icon">💊</span> Lecture 03: Feed Additives</div>
+                <div class="lecture-badge">Nutritional • Non‑nutritional • Medical</div>
+            </div>
+            <div class="lecture-content">
+                <div class="info-panel"><strong>Definition:</strong> Ingredients added to basic feed/ration to enhance nutritive value or other specific function.</div>
+                <div class="insight-grid">
+                    <div class="info-panel"><h3>🥗 Nutritional</h3>Multivitamins, molasses, mineral mixture (DCP, LS)</div>
+                    <div class="info-panel"><h3>🎨 Non‑nutritional</h3>Physical (colors, mould inhibitors), Chemical (sodium bentonite), Biological (mint, garlic, ginger for acidosis, turmeric, lemons)</div>
+                    <div class="info-panel"><h3>🏥 Medical</h3>Antibiotics (Linco doxy), Probiotics (yogurt), Insulin, Progesterone, Oxytocin (milk letdown), Placenta removal, Estrogen</div>
+                </div>
+                <div class="fact-badge">🧫 <strong>Biological additives:</strong> Mint → relieves bloat/tympany; Garlic/Ginger → acidosis; Fat cutters → reduce reproductive issues.</div>
+                <table>
+                    <tr><th>Type</th><th>Purpose</th><th>Examples</th></tr>
+                    <tr><td>Nutritional</td><td>Fulfill deficiencies</td><td>Multivitamins, mineral mix</td></tr>
+                    <tr><td>Non‑nutritional (bio)</td><td>Improve digestion</td><td>Mint, garlic, turmeric</td></tr>
+                    <tr><td>Medical</td><td>Growth/hormones</td><td>Probiotics, oxytocin, progesterone</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- LECTURE 04: small ruminants -->
+        <div class="lecture-card">
+            <div class="lecture-header">
+                <div class="lecture-title"><span class="lecture-icon">🐏</span> Lecture 04: Feeding Practices – Small Ruminants</div>
+                <div class="lecture-badge">Grazing • Stall • Combined</div>
+            </div>
+            <div class="lecture-content">
+                <div class="insight-grid">
+                    <div class="info-panel"><h3>🌾 Continuous grazing</h3>Same pasture all year, water given but no management → low gain/acre, waste, loss of desirable species.</div>
+                    <div class="info-panel"><h3>🔄 Rotational grazing</h3>Paddocks, rest period (e.g. 28d rest / 4d graze) → deeper roots, more production.</div>
+                    <div class="info-panel"><h3>🐐 Mixed grazing</h3>Goats + sheep + cattle together on same pasture.</div>
+                </div>
+                <div class="tree-modern">
+                    <strong>🏠 Stall feeding (intensive):</strong> animals tied, no free choice – farmer provides balanced diet (hay, grain, additives) → ensures health & max production.<br>
+                    <strong>🏡 Combined (grazing+stall):</strong> villages, sheep are selective grazers, goats are not. Adult sheep eats ~7 kg green fodder daily.<br>
+                    🎯 <span class="highlight">Concentrates given 21 days before lambing and 45 days after lambing</span> (healthy lamb crop).<br>
+                    <em>Lambing = giving birth in sheep.</em>
+                </div>
+                <table>
+                    <tr><th>Feeding system</th><th>Key feature</th></tr>
+                    <tr><td>Continuous grazing</td><td>No rotation, low productivity</td></tr>
+                    <tr><td>Rotational grazing</td><td>Paddocks, rest intervals</td></tr>
+                    <tr><td>Stall feeding</td><td>Complete diet provided by farmer</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- LECTURE 05: improving feed quality -->
+        <div class="lecture-card">
+            <div class="lecture-header">
+                <div class="lecture-title"><span class="lecture-icon">⚙️</span> Lecture 05: Methods of Improving Feed Quality</div>
+                <div class="lecture-badge">Physical • Chemical • Biological</div>
+            </div>
+            <div class="lecture-content">
+                <div class="insight-grid">
+                    <div class="info-panel"><h3>🔧 Physical</h3>Grinding, chopping, pelleting, soaking, steaming → ↑ digestibility, ↑ intake, less waste.</div>
+                    <div class="info-panel"><h3>🧪 Chemical</h3>Urea treatment: 2-4% urea + water, spray on wheat straw, store 15 days (anaerobic) → CP 3% → 8.5%. Also molasses-urea blocks.</div>
+                    <div class="info-panel"><h3>🧫 Biological</h3>Silage making, probiotics/enzymes, fungal treatments (degrade lignin).</div>
+                </div>
+                <div class="fact-badge">⚠️ <strong>Anti-nutritional factors:</strong> Gossypol, Nitrates, Oxalates → removed by heat treatment / hot air torch (e.g., maize).<br>
+                🧂 Feed additives for quality: buffers (prevent acidosis), antioxidants, toxin binders.</div>
+                <table>
+                    <tr><th>Method</th><th>Example</th><th>Result</th></tr>
+                    <tr><td>Urea treatment</td><td>2-4% urea, 15 days sealed</td><td>Protein 3% → 8.5%</td></tr>
+                    <tr><td>Physical</td><td>Grinding, pelleting</td><td>Better digestion & intake</td></tr>
+                    <tr><td>Biological</td><td>Silage, probiotics</td><td>↑ gut health, preservation</td></tr>
+                </table>
+                <div class="info-panel"><h3>📦 Storage & handling</h3>Dry, ventilated areas; avoid fungal contamination; airtight systems for silage/concentrates.</div>
+            </div>
+        </div>
+
+        <!-- LECTURE 06: silage & hay -->
+        <div class="lecture-card">
+            <div class="lecture-header">
+                <div class="lecture-title"><span class="lecture-icon">🌾</span> Lecture 06: Silage & Hay Making</div>
+                <div class="lecture-badge">Preservation methods</div>
+            </div>
+            <div class="lecture-content">
+                <div class="insight-grid">
+                    <div class="info-panel"><h3>🥬 Silage</h3>Moisture 70-75% • stored in silo • pressed layers + molasses/salts • covered with plastic (anaerobic) • fermentation by <strong>Clostridia</strong> → lactic acid → improves palatability • stored 2 months.</div>
+                    <div class="info-panel"><h3>🌿 Hay</h3>Moisture 20-25% • fully mature plants • stored in shade • turned daily • no fermentation.</div>
+                </div>
+                <div class="tree-modern">
+                    <strong>🧫 Clostridia</strong> = anaerobic bacteria that produce lactic acid, making silage more palatable and preserving nutrients.
+                </div>
+                <table>
+                    <tr><th>Feature</th><th>Silage</th><th>Hay</th></tr>
+                    <tr><td>Moisture</td><td>70-75%</td><td>20-25%</td></tr>
+                    <tr><td>Fermentation</td><td>Yes (Clostridia)</td><td>No</td></tr>
+                    <tr><td>Turning required</td><td>No</td><td>Daily</td></tr>
+                    <tr><td>Storage location</td><td>Silo (airtight)</td><td>Shade / dry area</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- LECTURE 07: feed formulation -->
+        <div class="lecture-card">
+            <div class="lecture-header">
+                <div class="lecture-title"><span class="lecture-icon">📐</span> Lecture 07: Feed Formulation</div>
+                <div class="lecture-badge">Pearson Square • 4 methods</div>
+            </div>
+            <div class="lecture-content">
+                <div class="info-panel"><strong>Definition:</strong> Combining 2+ ingredients to make a fixed ration fulfilling nutritional needs.</div>
+                <div class="tree-modern">
+                    <strong>4 METHODS</strong><br>
+                    1️⃣ Trial & error (Antoine L.) – time‑consuming, expensive, animal harm → abandoned.<br>
+                    2️⃣ Pearson's square – only for 2 ingredients.<br>
+                    3️⃣ Algebraic – prone to human error.<br>
+                    4️⃣ Computerized – accurate but software expensive.
+                </div>
+                <div class="info-panel" style="background:#fff3df;">
+                    <h3>⭐ Pearson square (exam example) ⭐</h3>
+                    <p><strong>Goal:</strong> 16% CP<br>
+                    Ingredient A: Wheat 48% CP<br>
+                    Ingredient B: Rice 11% CP</p>
+                    <div style="font-family: monospace; background: #fff0ce; padding: 0.8rem; border-radius: 1rem;">
+                        Wheat 48%   →   (16 - 11) = 5 parts Wheat<br>
+                        Rice  11%   →   (48 - 16) = 32 parts Rice<br>
+                        Total = 37 parts → Wheat % = 5/37 ≈ 13.5% &nbsp; Rice % = 32/37 ≈ 86.5%
+                    </div>
+                    <p>✅ Mix 13.5% wheat + 86.5% rice = 16% CP ration.<br>
+                    <em>Memory: “Big minus middle goes to opposite corner”.</em></p>
+                </div>
+                <div class="fact-badge">📉 Least‑cost formulation = cheapest balanced ration. Precision feeding reduces waste.</div>
+                <table>
+                    <tr><th>Method</th><th>Best for</th><th>Drawback</th></tr>
+                    <tr><td>Trial & error</td><td>Historical</td><td>Time, cost, animal risk</td></tr>
+                    <tr><td>Pearson square</td><td>2 ingredients</td><td>Cannot mix >2</td></tr>
+                    <tr><td>Computerized</td><td>Precision</td><td>Software expensive</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="footnote">
+        📚 Based on complete handwritten notes (Dr. Saqib Ali Rustam, Ph.D Animal Nutrition) – all lectures 1–7, no omissions.<br>
+        🎯 Modern visual format • Smooth animations • Exam‑ready summaries
+    </div>
+</div>
+
+<script>
+    // individual card toggle
+    const headers = document.querySelectorAll('.lecture-header');
+    headers.forEach(header => {
+        header.addEventListener('click', (e) => {
+            const content = header.nextElementSibling;
+            if (content && content.classList.contains('lecture-content')) {
+                content.classList.toggle('show');
+            }
+        });
+    });
+    // toggle all button (expand/collapse)
+    const toggleBtn = document.getElementById('toggleAllBtn');
+    toggleBtn.addEventListener('click', () => {
+        const allContents = document.querySelectorAll('.lecture-content');
+        const anyVisible = Array.from(allContents).some(c => c.classList.contains('show'));
+        allContents.forEach(content => {
+            if (anyVisible) content.classList.remove('show');
+            else content.classList.add('show');
+        });
+        toggleBtn.textContent = anyVisible ? "📂 Expand all lectures" : "📖 Collapse all";
+    });
+    // open first lecture by default
+    const firstContent = document.querySelector('.lecture-content');
+    if(firstContent) firstContent.classList.add('show');
+</script>
+</body>
+</html>
