@@ -15,7 +15,6 @@
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             background: #f0fdf4;
-            /* very light green tint */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -30,7 +29,6 @@
             border-radius: 40px;
             box-shadow: 0 20px 60px rgba(4, 120, 87, 0.12), 0 8px 24px rgba(0, 0, 0, 0.04);
             padding: 28px 22px 34px;
-            transition: all 0.2s;
             border: 1px solid #e6f7ec;
         }
 
@@ -49,7 +47,6 @@
             font-weight: 700;
             letter-spacing: -0.3px;
             color: #065f46;
-            /* deep emerald */
             display: flex;
             align-items: center;
             gap: 6px;
@@ -77,7 +74,6 @@
             border: 1px solid #86efac;
         }
 
-        /* ---- LABELS ---- */
         .section-label {
             font-size: 15px;
             font-weight: 600;
@@ -101,7 +97,7 @@
             justify-content: center;
         }
 
-        /* ---- ANIMAL GRID ---- */
+        /* ---- ANIMAL GRID (using HTML emojis) ---- */
         .animal-grid {
             display: flex;
             gap: 8px;
@@ -513,28 +509,11 @@
             display: block;
         }
 
-        /* ---- MISC ---- */
-        .mt-1 {
-            margin-top: 6px;
-        }
-        .mb-1 {
-            margin-bottom: 6px;
-        }
         .text-sm {
             font-size: 14px;
             color: #64748b;
         }
-        .flex {
-            display: flex;
-        }
-        .items-center {
-            align-items: center;
-        }
-        .gap-2 {
-            gap: 8px;
-        }
 
-        /* disabled state */
         .conc-row.disabled {
             opacity: 0.7;
             background: #f8fafc;
@@ -543,6 +522,18 @@
         .conc-row.disabled input {
             cursor: not-allowed;
         }
+
+        .formula-badge {
+            background: #f1f5f9;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 12px;
+            color: #475569;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 4px;
+            border: 1px solid #e2e8f0;
+        }
     </style>
 </head>
 <body>
@@ -550,11 +541,11 @@
     <div class="phone-frame" id="app">
         <!-- Header -->
         <div class="app-header">
-            <h1>🩺 Quick Dose <span>Beta</span></h1>
+            <h1>🩺 Quick Dose <span>MVP</span></h1>
             <div class="header-badge">🐾 Vet</div>
         </div>
 
-        <!-- 1. ANIMAL -->
+        <!-- 1. ANIMAL (using HTML emojis) -->
         <div class="section-label"><span class="step">1</span> Select Animal</div>
         <div class="animal-grid" id="animalGrid"></div>
 
@@ -579,12 +570,17 @@
         <!-- 5. CONCENTRATION -->
         <div class="section-label" style="margin-top: 4px;"><span class="step">5</span> Concentration</div>
         <div class="conc-row" id="concRow">
-            <input type="number" id="concInput" step="any" value="20" />
+            <input type="number" id="concInput" step="any" value="4" />
             <div class="unit-toggle" id="unitToggle">
                 <button data-unit="mgml" class="active">mg/ml</button>
                 <button data-unit="percent">%</button>
             </div>
             <span class="conc-lock-badge" id="lockBadge" style="display: none;">🔒 Auto</span>
+        </div>
+
+        <!-- Formula reference -->
+        <div class="formula-badge">
+            ⚡ <strong>Formula:</strong> (Weight × Dose Rate) ÷ Concentration
         </div>
 
         <!-- CALCULATE -->
@@ -600,8 +596,8 @@
                 <span class="unit" id="resultUnit">ml</span>
             </div>
             <div class="result-breakdown" id="resultBreakdown">
-                <div class="line"><span class="label">⚖️ Required total</span><span class="value" id="rdTotal">—</span></div>
-                <div class="line"><span class="label">🧪 Concentration</span><span class="value" id="rdConc">—</span></div>
+                <div class="line"><span class="label">📐 Step 1: Weight × Dose Rate</span><span class="value" id="rdStep1">—</span></div>
+                <div class="line"><span class="label">🧪 Step 2: Total mg ÷ Concentration</span><span class="value" id="rdStep2">—</span></div>
                 <div class="line" style="border-top: 1px solid #dcfce7; padding-top: 6px; margin-top: 4px;">
                     <span class="label" style="font-weight: 700;">💉 Final Dose</span>
                     <span class="value highlight" id="rdFinal">—</span>
@@ -616,7 +612,7 @@
 
     <script>
         // ============================================================
-        //  DATA (hardcoded for the test)
+        //  ANIMALS (HTML emojis per your request)
         // ============================================================
         const ANIMALS = [
             { id: 'dog', name: 'Dog', emoji: '🐶' },
@@ -627,29 +623,36 @@
             { id: 'bird', name: 'Bird', emoji: '🐓' },
         ];
 
+        // ============================================================
+        //  DRUGS WITH CORRECT VET DATA
+        //  Formula: (Weight × Dose Rate) ÷ Concentration
+        //  Meloxicam: 1 mg/kg for dogs, 20mg/5ml = 4 mg/ml
+        // ============================================================
         const DRUGS = [{
             id: 'meloxicam',
             name: 'Meloxicam',
             brands: ['Metacam', 'Mobic'],
             formulations: ['Injection', 'Tablet'],
-            concMap: { 'Injection': { value: 20, unit: 'mgml' }, 'Tablet': { value: 15, unit: 'mgml' } },
-            dosage: { dog: 0.2, cat: 0.1, horse: 0.6, cow: 0.5, goat: 0.5, bird: 0.2 }
+            // 20mg per 5ml = 4 mg/ml
+            concMap: { 'Injection': { value: 4, unit: 'mgml' }, 'Tablet': { value: 15, unit: 'mgml' } },
+            dosage: { dog: 1, cat: 0.1, horse: 0.6, cow: 0.5, goat: 0.5, bird: 0.2 }
         }, {
             id: 'amoxicillin',
             name: 'Amoxicillin',
             brands: ['Amoxiclav', 'Augmentin', 'Clamoxyl'],
             formulations: ['Injection', 'Tablet', 'Syrup'],
             concMap: { 'Injection': { value: 150, unit: 'mgml' }, 'Tablet': { value: 500, unit: 'mgml' },
-            'Syrup': { value: 50, unit: 'mgml' } },
+                'Syrup': { value: 50, unit: 'mgml' } },
             dosage: { dog: 10, cat: 10, horse: 10, cow: 10, goat: 10, bird: 15 }
         }, {
             id: 'ivermectin',
             name: 'Ivermectin',
             brands: ['IvoteK', 'Ivomec', 'Noromectin'],
             formulations: ['Injection', 'Oral'],
+            // 1% = 10 mg/ml
             concMap: { 'Injection': { value: 1, unit: 'percent' }, 'Oral': { value: 1, unit: 'percent' } },
             dosage: { dog: 0.2, cat: 0.2, horse: 0.2, cow: 0.2, goat: 0.2, bird: 0.2 },
-            // special: if brand is IvoteK, lock concentration to 1%
+            // Brand lock: if user types "IvoteK", concentration locks to 1%
             brandLock: { 'IvoteK': { value: 1, unit: 'percent' } }
         }, {
             id: 'enrofloxacin',
@@ -658,6 +661,13 @@
             formulations: ['Injection', 'Tablet'],
             concMap: { 'Injection': { value: 100, unit: 'mgml' }, 'Tablet': { value: 50, unit: 'mgml' } },
             dosage: { dog: 5, cat: 5, horse: 5, cow: 5, goat: 5, bird: 10 }
+        }, {
+            id: 'dexamethasone',
+            name: 'Dexamethasone',
+            brands: ['Azium', 'Dexone'],
+            formulations: ['Injection', 'Tablet'],
+            concMap: { 'Injection': { value: 2, unit: 'mgml' }, 'Tablet': { value: 0.5, unit: 'mgml' } },
+            dosage: { dog: 0.1, cat: 0.1, horse: 0.05, cow: 0.05, goat: 0.05, bird: 0.2 }
         }];
 
         // ============================================================
@@ -666,10 +676,10 @@
         let state = {
             selectedAnimal: 'dog',
             weight: 5,
-            selectedDrug: null, // full drug object
+            selectedDrug: null,
             selectedFormulation: null,
-            concValue: 20,
-            concUnit: 'mgml', // 'mgml' or 'percent'
+            concValue: 4,
+            concUnit: 'mgml',
             isConcLocked: false,
         };
 
@@ -692,8 +702,8 @@
         const resultCard = $('#resultCard');
         const resultValue = $('#resultValue');
         const resultUnit = $('#resultUnit');
-        const rdTotal = $('#rdTotal');
-        const rdConc = $('#rdConc');
+        const rdStep1 = $('#rdStep1');
+        const rdStep2 = $('#rdStep2');
         const rdFinal = $('#rdFinal');
         const statusMsg = $('#statusMsg');
 
@@ -702,11 +712,11 @@
         // ============================================================
         function renderAnimals() {
             animalGrid.innerHTML = ANIMALS.map(a => `
-                <div class="animal-card ${state.selectedAnimal === a.id ? 'active' : ''}" data-id="${a.id}">
-                    <span class="emoji">${a.emoji}</span>
-                    <span class="name">${a.name}</span>
-                </div>
-            `).join('');
+                    <div class="animal-card ${state.selectedAnimal === a.id ? 'active' : ''}" data-id="${a.id}">
+                        <span class="emoji">${a.emoji}</span>
+                        <span class="name">${a.name}</span>
+                    </div>
+                `).join('');
 
             animalGrid.querySelectorAll('.animal-card').forEach(el => {
                 el.addEventListener('click', () => {
@@ -738,11 +748,11 @@
             }
 
             drugDropdown.innerHTML = matches.map(d => `
-                <div class="dropdown-item" data-id="${d.id}">
-                    <span class="drug-name">${d.name}</span>
-                    <span class="brand-tag">${d.brands.slice(0,3).join(', ')}</span>
-                </div>
-            `).join('');
+                    <div class="dropdown-item" data-id="${d.id}">
+                        <span class="drug-name">${d.name}</span>
+                        <span class="brand-tag">${d.brands.slice(0,3).join(', ')}</span>
+                    </div>
+                `).join('');
 
             drugDropdown.querySelectorAll('.dropdown-item').forEach(el => {
                 el.addEventListener('click', () => {
@@ -763,7 +773,7 @@
             state.selectedFormulation = null;
             state.isConcLocked = false;
 
-            // Check brand lock (if user searched by brand, we can detect via input value, but we'll just check if any brand matches input exactly)
+            // Check brand lock (if user searched by brand)
             const inputVal = drugSearchInput.value.trim();
             const matchedBrand = drug.brands.find(b => b.toLowerCase() === inputVal.toLowerCase());
             if (matchedBrand && drug.brandLock && drug.brandLock[matchedBrand]) {
@@ -783,13 +793,10 @@
                 }
             }
 
-            // Update input fields
             drugSearchInput.value = drug.name;
             drugDropdown.classList.remove('open');
 
-            // Render formulations
             renderFormulations();
-            // Update concentration UI
             updateConcUI();
             clearResult();
             statusMsg.classList.remove('show');
@@ -806,16 +813,15 @@
 
             const forms = state.selectedDrug.formulations;
             formulationChips.innerHTML = forms.map(f => `
-                <div class="chip ${state.selectedFormulation === f ? 'active' : ''}" data-form="${f}">
-                    ${f === 'Injection' ? '💉' : f === 'Tablet' ? '💊' : f === 'Syrup' ? '🧪' : '🧴'} ${f}
-                </div>
-            `).join('');
+                    <div class="chip ${state.selectedFormulation === f ? 'active' : ''}" data-form="${f}">
+                        ${f === 'Injection' ? '💉' : f === 'Tablet' ? '💊' : f === 'Syrup' ? '🧪' : '🧴'} ${f}
+                    </div>
+                `).join('');
 
             formulationChips.querySelectorAll('.chip').forEach(el => {
                 el.addEventListener('click', () => {
                     const form = el.dataset.form;
                     state.selectedFormulation = form;
-                    // Update concentration based on formulation
                     if (state.selectedDrug.concMap && state.selectedDrug.concMap[form]) {
                         const c = state.selectedDrug.concMap[form];
                         if (!state.isConcLocked) {
@@ -849,7 +855,6 @@
         // ============================================================
         function updateConcUI() {
             concInput.value = state.concValue;
-            // update toggle
             unitToggle.querySelectorAll('button').forEach(btn => {
                 const unit = btn.dataset.unit;
                 btn.classList.toggle('active', unit === state.concUnit);
@@ -867,7 +872,9 @@
         }
 
         // ============================================================
-        //  CALCULATE
+        //  CALCULATE — THE FINAL TEXTBOOK FORMULA
+        //  Volume (mL) = [ Weight (kg) × Dose Rate (mg/kg) ] ÷ Concentration (mg/mL)
+        //  For tablets: Tablets = [ Weight × Dose Rate ] ÷ Tablet Strength
         // ============================================================
         function calculate() {
             statusMsg.classList.remove('show');
@@ -875,6 +882,7 @@
 
             // 1. Animal
             const animalId = state.selectedAnimal;
+
             // 2. Weight
             const weight = parseFloat(weightInput.value);
             if (!weight || weight <= 0) {
@@ -895,6 +903,7 @@
                 showStatus('Please select a formulation.', true);
                 return;
             }
+            const form = state.selectedFormulation;
 
             // 5. Concentration
             let concVal = parseFloat(concInput.value);
@@ -903,29 +912,26 @@
                 return;
             }
             let concUnit = state.concUnit;
-            // if toggle is mgml but we need to respect state
-            // get from UI toggle active
             const activeUnitBtn = unitToggle.querySelector('button.active');
             if (activeUnitBtn) concUnit = activeUnitBtn.dataset.unit;
-
-            // update state
             state.concValue = concVal;
             state.concUnit = concUnit;
 
-            // 6. Dosage rule
+            // 6. Dose rate from DB
             const doseRate = drug.dosage?.[animalId];
             if (doseRate === undefined || doseRate === null) {
-                showStatus(`No dosage rule for ${ANIMALS.find(a=>a.id===animalId)?.name} with ${drug.name}.`, true);
+                const animalName = ANIMALS.find(a => a.id === animalId)?.name || animalId;
+                showStatus(`No dosage rule for ${animalName} with ${drug.name}.`, true);
                 return;
             }
 
-            // 7. Calculate
-            const totalMg = weight * doseRate; // mg
+            // 7. Step 1: Total mg required
+            const totalMg = weight * doseRate;
 
-            // Convert concentration to mg/ml
+            // 8. Convert concentration to mg/mL (if percentage)
             let concMgPerMl;
             if (concUnit === 'percent') {
-                // 1% = 10 mg/ml
+                // 1% = 10 mg/mL
                 concMgPerMl = concVal * 10;
             } else {
                 concMgPerMl = concVal;
@@ -936,38 +942,50 @@
                 return;
             }
 
-            const doseMl = totalMg / concMgPerMl;
+            // 9. Step 2: Final volume (mL)
+            let doseMl = totalMg / concMgPerMl;
 
-            // 8. Display
+            // 10. Display with formatting
             const animalName = ANIMALS.find(a => a.id === animalId)?.name || animalId;
-            const formLabel = state.selectedFormulation;
-
-            // Determine unit for result
-            let resultUnitStr = 'ml';
+            let resultUnitStr = 'mL';
             let displayDose = doseMl;
-            if (formLabel === 'Tablet') {
-                // if tablet, show number of tablets (round to nearest 0.5)
-                displayDose = Math.round(doseMl * 2) / 2;
+
+            // If Tablet, show number of tablets (round to nearest practical dose)
+            if (form === 'Tablet') {
+                // Tablet strength is essentially the concentration value (mg per tablet)
+                const tabletStrength = concMgPerMl; // because conc is mg per tablet in our data
+                let tablets = totalMg / tabletStrength;
+                // Round to nearest 0.5 tablet for practical dosing
+                displayDose = Math.round(tablets * 2) / 2;
                 resultUnitStr = displayDose === 1 ? 'tablet' : 'tablets';
             } else {
+                // For liquids, round to 2 decimal places
                 displayDose = Math.round(doseMl * 100) / 100;
-                resultUnitStr = 'ml';
+                resultUnitStr = 'mL';
             }
 
+            // 11. Update Result Card
             resultValue.textContent = displayDose;
             resultUnit.textContent = resultUnitStr;
 
-            rdTotal.textContent = `${totalMg.toFixed(2)} mg`;
-            let concDisplay = `${concVal} `;
+            // Breakdown
+            const doseRateDisplay = doseRate % 1 === 0 ? doseRate : doseRate.toFixed(2);
+            rdStep1.textContent = `${weight} kg × ${doseRateDisplay} mg/kg = ${totalMg.toFixed(2)} mg`;
+
+            let concDisplay = `${concVal}`;
             if (concUnit === 'percent') concDisplay += '%';
-            else concDisplay += 'mg/ml';
-            rdConc.textContent = concDisplay;
+            else concDisplay += ' mg/mL';
+            rdStep2.textContent = `${totalMg.toFixed(2)} mg ÷ ${concMgPerMl.toFixed(2)} mg/mL = ${doseMl.toFixed(2)} mL`;
+
             rdFinal.textContent = `${displayDose} ${resultUnitStr}`;
 
             resultCard.classList.add('show');
             statusMsg.classList.remove('show');
         }
 
+        // ============================================================
+        //  HELPERS
+        // ============================================================
         function showStatus(msg, isError = true) {
             statusMsg.textContent = msg;
             statusMsg.style.color = isError ? '#b91c1c' : '#065f46';
@@ -985,13 +1003,8 @@
         // ============================================================
         //  EVENT BINDINGS
         // ============================================================
+        weightInput.addEventListener('input', clearResult);
 
-        // Weight input
-        weightInput.addEventListener('input', () => {
-            clearResult();
-        });
-
-        // Drug search input
         drugSearchInput.addEventListener('input', (e) => {
             const val = e.target.value;
             if (val.length > 0) {
@@ -1002,11 +1015,8 @@
             clearResult();
         });
 
-        // Close dropdown on blur (with delay)
         drugSearchInput.addEventListener('blur', () => {
-            setTimeout(() => {
-                drugDropdown.classList.remove('open');
-            }, 180);
+            setTimeout(() => { drugDropdown.classList.remove('open'); }, 180);
         });
         drugSearchInput.addEventListener('focus', () => {
             if (drugSearchInput.value.length > 0) {
@@ -1014,7 +1024,6 @@
             }
         });
 
-        // Unit toggle
         unitToggle.addEventListener('click', (e) => {
             const btn = e.target.closest('button');
             if (!btn) return;
@@ -1026,20 +1035,16 @@
             btn.classList.add('active');
             state.concUnit = btn.dataset.unit;
             clearResult();
-            // update conc input placeholder or just keep value
         });
 
-        // Conc input
         concInput.addEventListener('input', () => {
             if (state.isConcLocked) return;
             state.concValue = parseFloat(concInput.value) || 0;
             clearResult();
         });
 
-        // Calculate button
         calcBtn.addEventListener('click', calculate);
 
-        // Enter key on weight or search
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 if (document.activeElement === weightInput || document.activeElement === drugSearchInput) {
@@ -1054,12 +1059,12 @@
         // ============================================================
         function init() {
             renderAnimals();
-            // Pre-select first drug (Meloxicam) for demo
-            const defaultDrug = DRUGS[0];
+
+            // Default: Meloxicam, Injection, 4 mg/ml, Dog, 5kg
+            const defaultDrug = DRUGS[0]; // Meloxicam
             state.selectedDrug = defaultDrug;
             drugSearchInput.value = defaultDrug.name;
-            // set default formulation
-            state.selectedFormulation = defaultDrug.formulations[0];
+            state.selectedFormulation = defaultDrug.formulations[0]; // Injection
             if (defaultDrug.concMap && defaultDrug.concMap[state.selectedFormulation]) {
                 const c = defaultDrug.concMap[state.selectedFormulation];
                 state.concValue = c.value;
@@ -1067,11 +1072,11 @@
             }
             renderFormulations();
             updateConcUI();
-            // Set weight default
             weightInput.value = 5;
+            state.weight = 5;
 
-            // Run initial calculation to show result
-            setTimeout(() => calculate(), 200);
+            // Auto-calculate on load to show result
+            setTimeout(() => calculate(), 300);
         }
 
         init();
