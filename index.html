@@ -6,6 +6,7 @@
     <title>Quick Dose · Vet Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
     <style>
+        /* --- SAME BASE STYLES AS BEFORE --- */
         * {
             margin: 0;
             padding: 0;
@@ -133,6 +134,7 @@
             border-radius: 10px;
         }
 
+        /* ---- TABS ---- */
         .tabs {
             display: flex;
             gap: 6px;
@@ -182,7 +184,7 @@
             }
         }
 
-        /* ---- HISTORY ---- */
+        /* ---- HISTORY (unchanged) ---- */
         .history-list {
             display: flex;
             flex-direction: column;
@@ -283,7 +285,7 @@
             align-items: center;
         }
 
-        /* ---- DRUG LIST ---- */
+        /* ---- DRUG LIST (with Edit & Delete) ---- */
         .drug-list-header {
             display: flex;
             justify-content: space-between;
@@ -354,7 +356,6 @@
             border-radius: 20px;
             padding: 14px 16px;
             border-left: 5px solid #86efac;
-            position: relative;
         }
         .drug-card .d-name {
             font-weight: 700;
@@ -493,6 +494,7 @@
             min-height: 60px;
         }
 
+        /* ---- Concentration Rows ---- */
         .conc-rows-container {
             display: flex;
             flex-direction: column;
@@ -532,25 +534,28 @@
             white-space: nowrap;
         }
 
-        .species-doses-grid {
+        /* ---- Species Doses & Cautions GRID ---- */
+        .species-doses-grid,
+        .cautions-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr;
             gap: 8px 12px;
         }
-        .species-doses-grid .species-input {
+        .species-doses-grid .species-input,
+        .cautions-grid .species-input {
             display: flex;
-            align-items: center;
-            gap: 6px;
+            flex-direction: column;
+            gap: 2px;
         }
-        .species-doses-grid .species-input label {
+        .species-doses-grid .species-input label,
+        .cautions-grid .species-input label {
             font-weight: 500;
-            font-size: 13px;
+            font-size: 12px;
             color: #334155;
-            min-width: 32px;
             margin-bottom: 0;
         }
         .species-doses-grid .species-input input {
-            width: 70px;
+            width: 100%;
             padding: 6px 8px;
             font-size: 14px;
             border: 2px solid #e2efe8;
@@ -560,7 +565,18 @@
             outline: none;
             font-family: 'Inter', sans-serif;
         }
-        .species-doses-grid .species-input input:focus {
+        .cautions-grid .species-input input {
+            width: 100%;
+            padding: 6px 8px;
+            font-size: 12px;
+            border: 2px solid #e2efe8;
+            border-radius: 40px;
+            background: white;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+        .species-doses-grid .species-input input:focus,
+        .cautions-grid .species-input input:focus {
             border-color: #059669;
             box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.06);
         }
@@ -607,7 +623,7 @@
             display: block;
         }
 
-        /* ---- MAIN PAGE ---- */
+        /* ---- MAIN PAGE (unchanged) ---- */
         .app-header {
             display: flex;
             align-items: center;
@@ -993,6 +1009,8 @@
         .calc-btn:active {
             transform: scale(0.98);
         }
+
+        /* ---- RESULT CARD (with CAUTION BANNER) ---- */
         .result-card {
             background: #fafffe;
             border: 2px solid #86efac;
@@ -1055,6 +1073,39 @@
             color: #065f46;
             font-weight: 700;
         }
+
+        /* ---- ⚠️ CAUTION BANNER (inside result card) ---- */
+        .caution-banner {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 16px;
+            border-left: 6px solid;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.4;
+        }
+        .caution-banner.show {
+            display: flex;
+        }
+        .caution-banner .caution-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .caution-banner.warning {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #78350f;
+        }
+        .caution-banner.danger {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
         .status-msg {
             font-size: 14px;
             color: #b91c1c;
@@ -1123,7 +1174,8 @@
             .settings-content {
                 padding: 16px;
             }
-            .species-doses-grid {
+            .species-doses-grid,
+            .cautions-grid {
                 grid-template-columns: 1fr 1fr;
             }
             .conc-row-item {
@@ -1203,6 +1255,11 @@
                         <span class="value highlight" id="rdFinal">—</span>
                     </div>
                 </div>
+                <!-- ⚠️ CAUTION BANNER -->
+                <div class="caution-banner" id="cautionBanner">
+                    <span class="caution-icon">⚠️</span>
+                    <span id="cautionText"></span>
+                </div>
             </div>
 
             <div class="footer-note">
@@ -1261,10 +1318,19 @@
                                 <label>Concentrations (one per formulation)</label>
                                 <div class="conc-rows-container" id="newDrugConcsContainer"></div>
                             </div>
+
+                            <!-- DOSES -->
                             <div class="full-width">
                                 <label>Dose Rates (mg/kg) for each species</label>
                                 <div class="species-doses-grid" id="speciesDosesContainer"></div>
                             </div>
+
+                            <!-- CAUTIONS (NEW) -->
+                            <div class="full-width">
+                                <label>⚠️ Cautions / Warnings (per species)</label>
+                                <div class="cautions-grid" id="cautionsContainer"></div>
+                            </div>
+
                             <div class="form-error" id="formError"></div>
                             <div class="full-width form-actions">
                                 <button class="cancel-btn" id="cancelDrugBtn">Cancel</button>
@@ -1306,7 +1372,7 @@
         ];
 
         // ============================================================
-        //  DEFAULT DRUGS
+        //  DEFAULT DRUGS (with CAUTIONS)
         // ============================================================
         const DEFAULT_DRUGS = [{
             id: 'meloxicam',
@@ -1318,6 +1384,16 @@
                 'Tablet': { type: 'tablet', mgPerTab: 15 }
             },
             dosage: { dog: 1.0, cat: 0.1, horse: 0.6, cow: 0.5, buffalo: 0.4, sheep: 0.5, goat: 0.5, bird: 0.2 },
+            cautions: {
+                dog: "Avoid in dehydrated animals or those with kidney failure.",
+                cat: "Use with caution in cats with renal impairment.",
+                horse: "Do not use in horses with gastrointestinal ulcers.",
+                cow: "Withdrawal period applies for milk.",
+                buffalo: "Withdrawal period applies for milk.",
+                sheep: "Withdrawal period applies for milk and meat.",
+                goat: "Withdrawal period applies for milk and meat.",
+                bird: "Use with caution in birds; dose carefully."
+            },
             brandLock: {}
         }, {
             id: 'amoxicillin',
@@ -1330,6 +1406,16 @@
                 'Syrup': { type: 'liquid', mg: 50, ml: 1 }
             },
             dosage: { dog: 10, cat: 10, horse: 10, cow: 10, buffalo: 10, sheep: 10, goat: 10, bird: 15 },
+            cautions: {
+                dog: "May cause GI upset. Avoid in penicillin-allergic animals.",
+                cat: "May cause GI upset. Avoid in penicillin-allergic animals.",
+                horse: "May cause GI upset. Avoid in penicillin-allergic animals.",
+                cow: "Withdrawal period for milk and meat.",
+                buffalo: "Withdrawal period for milk and meat.",
+                sheep: "Withdrawal period for milk and meat.",
+                goat: "Withdrawal period for milk and meat.",
+                bird: "Use cautiously; may cause GI flora imbalance."
+            },
             brandLock: {}
         }, {
             id: 'ivermectin',
@@ -1341,6 +1427,16 @@
                 'Oral': { type: 'percent', value: 1 }
             },
             dosage: { dog: 0.2, cat: 0.2, horse: 0.2, cow: 0.2, buffalo: 0.2, sheep: 0.15, goat: 0.2, bird: 0.2 },
+            cautions: {
+                dog: "TOXIC to Collies, Old English Sheepdogs, and related breeds! Do not use in these breeds.",
+                cat: "DO NOT use in kittens under 6 weeks of age.",
+                horse: "Do not use in horses with known hypersensitivity.",
+                cow: "Withdrawal period for milk and meat.",
+                buffalo: "Withdrawal period for milk and meat.",
+                sheep: "Withdrawal period for milk and meat.",
+                goat: "Withdrawal period for milk and meat.",
+                bird: "Use with extreme caution; narrow safety margin in birds."
+            },
             brandLock: { 'IvoteK': { type: 'percent', value: 1 } }
         }, {
             id: 'enrofloxacin',
@@ -1352,6 +1448,16 @@
                 'Tablet': { type: 'tablet', mgPerTab: 50 }
             },
             dosage: { dog: 5, cat: 5, horse: 5, cow: 5, buffalo: 4.5, sheep: 5, goat: 5, bird: 10 },
+            cautions: {
+                dog: "Avoid in growing puppies (may cause cartilage damage).",
+                cat: "Use with caution; may cause retinal degeneration in cats.",
+                horse: "Avoid in young horses due to cartilage effects.",
+                cow: "Withdrawal period for milk and meat.",
+                buffalo: "Withdrawal period for milk and meat.",
+                sheep: "Withdrawal period for milk and meat.",
+                goat: "Withdrawal period for milk and meat.",
+                bird: "Use with caution; may cause digestive upset."
+            },
             brandLock: {}
         }, {
             id: 'dexamethasone',
@@ -1363,6 +1469,16 @@
                 'Tablet': { type: 'tablet', mgPerTab: 0.5 }
             },
             dosage: { dog: 0.1, cat: 0.1, horse: 0.05, cow: 0.05, buffalo: 0.04, sheep: 0.05, goat: 0.05, bird: 0.2 },
+            cautions: {
+                dog: "Do not use in pregnant animals. May cause immunosuppression.",
+                cat: "Do not use in pregnant animals. May cause immunosuppression.",
+                horse: "Do not use in pregnant animals. May cause laminitis.",
+                cow: "Withdrawal period for milk and meat. Do not use in pregnant animals.",
+                buffalo: "Withdrawal period for milk and meat. Do not use in pregnant animals.",
+                sheep: "Withdrawal period for milk and meat. Do not use in pregnant animals.",
+                goat: "Withdrawal period for milk and meat. Do not use in pregnant animals.",
+                bird: "Use with extreme caution; may cause immunosuppression."
+            },
             brandLock: {}
         }];
 
@@ -1409,7 +1525,7 @@
         };
 
         let historyEntries = [];
-        let editingDrugId = null; // null = add mode, string = edit mode
+        let editingDrugId = null;
 
         // ============================================================
         //  DOM REFS
@@ -1439,6 +1555,8 @@
         const rdStep2 = $('#rdStep2');
         const rdFinal = $('#rdFinal');
         const statusMsg = $('#statusMsg');
+        const cautionBanner = $('#cautionBanner');
+        const cautionText = $('#cautionText');
 
         const historyList = $('#historyList');
         const historyCount = $('#historyCount');
@@ -1452,6 +1570,7 @@
         const newDrugFormulations = $('#newDrugFormulations');
         const newDrugConcsContainer = $('#newDrugConcsContainer');
         const speciesDosesContainer = $('#speciesDosesContainer');
+        const cautionsContainer = $('#cautionsContainer');
         const saveDrugBtn = $('#saveDrugBtn');
         const cancelDrugBtn = $('#cancelDrugBtn');
         const formError = $('#formError');
@@ -1544,7 +1663,7 @@
         clearHistoryBtn.addEventListener('click', clearHistory);
 
         // ============================================================
-        //  DRUG LIST UI (with Edit & Delete)
+        //  DRUG LIST UI
         // ============================================================
         function renderDrugList() {
             const drugs = allDrugs;
@@ -1579,7 +1698,6 @@
                     `;
             }).join('');
 
-            // Attach event listeners for edit/delete
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const id = btn.dataset.id;
@@ -1608,7 +1726,6 @@
             saveDrugs(allDrugs);
             renderDrugList();
 
-            // If the deleted drug was selected on the main page, clear the selection
             if (state.selectedDrug && state.selectedDrug.id === id) {
                 state.selectedDrug = null;
                 state.selectedFormulation = null;
@@ -1616,6 +1733,7 @@
                 formulationChips.innerHTML = `<span class="text-sm">Select a drug first</span>`;
                 concInputArea.innerHTML = `<span class="text-sm" style="color:#94a3b8;">Select a formulation first</span>`;
                 resultCard.classList.remove('show');
+                cautionBanner.classList.remove('show');
             }
             alert(`🗑️ "${drug.name}" deleted.`);
         }
@@ -1625,35 +1743,55 @@
         // ============================================================
         function openEditForm(drug) {
             editingDrugId = drug.id;
-            // Populate basic fields
             newDrugName.value = drug.name;
             newDrugBrands.value = drug.brands.join(', ');
             newDrugFormulations.value = drug.formulations.join(', ');
 
-            // Open the form
             addDrugForm.classList.add('open');
-            buildSpeciesDoseInputs();
+            buildSpeciesInputs();
 
-            // Populate species doses
+            // Populate doses & cautions
             for (const a of ANIMALS) {
-                const inp = document.getElementById(`dose_${a.id}`);
-                if (inp) {
-                    inp.value = drug.dosage[a.id] !== undefined ? drug.dosage[a.id] : '';
+                const doseInp = document.getElementById(`dose_${a.id}`);
+                if (doseInp) {
+                    doseInp.value = drug.dosage[a.id] !== undefined ? drug.dosage[a.id] : '';
+                }
+                const cautionInp = document.getElementById(`caution_${a.id}`);
+                if (cautionInp) {
+                    cautionInp.value = drug.cautions && drug.cautions[a.id] ? drug.cautions[a.id] : '';
                 }
             }
 
-            // Build concentration rows with existing concMap
             buildConcInputs(drug.concMap);
-
-            // Change button text to "Update"
             saveDrugBtn.textContent = '💾 Update Drug';
-
-            // Remove any existing listener to avoid double-save, we handle it in saveDrugBtn click
-            // We'll use the same validateAndSaveDrug, but it will check editingDrugId
         }
 
         // ============================================================
-        //  ADD DRUG FORM - BUILD CONCENTRATION ROWS (with prefill)
+        //  BUILD SPECIES INPUTS (Doses + Cautions)
+        // ============================================================
+        function buildSpeciesInputs() {
+            let doseHtml = '';
+            let cautionHtml = '';
+            ANIMALS.forEach(a => {
+                doseHtml += `
+                        <div class="species-input">
+                            <label>${a.emoji} ${a.name}</label>
+                            <input type="number" step="any" min="0" id="dose_${a.id}" placeholder="mg/kg" />
+                        </div>
+                    `;
+                cautionHtml += `
+                        <div class="species-input">
+                            <label>${a.emoji} ${a.name}</label>
+                            <input type="text" id="caution_${a.id}" placeholder="Caution / Warning" />
+                        </div>
+                    `;
+            });
+            speciesDosesContainer.innerHTML = doseHtml;
+            cautionsContainer.innerHTML = cautionHtml;
+        }
+
+        // ============================================================
+        //  BUILD CONCENTRATION INPUTS
         // ============================================================
         function buildConcInputs(prefillConcMap = null) {
             const formulationsRaw = newDrugFormulations.value.trim();
@@ -1691,7 +1829,6 @@
             });
             newDrugConcsContainer.innerHTML = html;
 
-            // Add event listeners to toggle fields based on type select
             document.querySelectorAll('.conc-type-select').forEach(sel => {
                 sel.addEventListener('change', function() {
                     const idx = this.dataset.idx;
@@ -1722,20 +1859,13 @@
                         label3.style.display = 'none';
                     }
                 });
-                // Trigger initial
                 sel.dispatchEvent(new Event('change'));
             });
         }
 
-        function buildSpeciesDoseInputs() {
-            speciesDosesContainer.innerHTML = ANIMALS.map(a => `
-                    <div class="species-input">
-                        <label>${a.emoji}</label>
-                        <input type="number" step="any" min="0" id="dose_${a.id}" placeholder="mg/kg" />
-                    </div>
-                `).join('');
-        }
-
+        // ============================================================
+        //  RESET / OPEN ADD FORM
+        // ============================================================
         function resetAddForm() {
             editingDrugId = null;
             newDrugName.value = '';
@@ -1743,24 +1873,25 @@
             newDrugFormulations.value = '';
             newDrugConcsContainer.innerHTML = '';
             document.querySelectorAll('#speciesDosesContainer input').forEach(inp => inp.value = '');
+            document.querySelectorAll('#cautionsContainer input').forEach(inp => inp.value = '');
             formError.classList.remove('show');
             formError.textContent = '';
             addDrugForm.classList.remove('open');
-            newDrugFormulations.removeEventListener('input', buildConcInputs);
+            newDrugFormulations.removeEventListener('input', () => buildConcInputs());
             saveDrugBtn.textContent = '💾 Save Drug';
         }
 
         function openAddForm() {
             resetAddForm();
             addDrugForm.classList.add('open');
-            buildSpeciesDoseInputs();
+            buildSpeciesInputs();
             buildConcInputs();
             newDrugFormulations.addEventListener('input', () => buildConcInputs());
             saveDrugBtn.textContent = '💾 Save Drug';
         }
 
         // ============================================================
-        //  VALIDATE & SAVE (handles both Add and Update)
+        //  VALIDATE & SAVE (Add or Update)
         // ============================================================
         function validateAndSaveDrug() {
             const name = newDrugName.value.trim();
@@ -1777,6 +1908,7 @@
                 return;
             }
 
+            // Parse concentrations
             const concMap = {};
             const concRows = newDrugConcsContainer.querySelectorAll('.conc-row-item');
             if (concRows.length !== formulations.length) {
@@ -1814,19 +1946,24 @@
             });
             if (error) return;
 
+            // Parse doses & cautions
             const dosage = {};
+            const cautions = {};
             for (const a of ANIMALS) {
-                const inp = document.getElementById(`dose_${a.id}`);
-                const val = parseFloat(inp.value);
-                if (isNaN(val) || val < 0) {
+                const doseInp = document.getElementById(`dose_${a.id}`);
+                const doseVal = parseFloat(doseInp.value);
+                if (isNaN(doseVal) || doseVal < 0) {
                     showFormError(`Invalid dose for ${a.name}. Must be a number >= 0.`);
                     return;
                 }
-                dosage[a.id] = val;
+                dosage[a.id] = doseVal;
+
+                const cautionInp = document.getElementById(`caution_${a.id}`);
+                cautions[a.id] = cautionInp.value.trim();
             }
 
             if (editingDrugId) {
-                // ---- UPDATE EXISTING DRUG ----
+                // UPDATE
                 const index = allDrugs.findIndex(d => d.id === editingDrugId);
                 if (index !== -1) {
                     allDrugs[index] = {
@@ -1836,17 +1973,15 @@
                         formulations: formulations,
                         concMap: concMap,
                         dosage: dosage,
+                        cautions: cautions,
                         brandLock: allDrugs[index].brandLock || {}
                     };
                     saveDrugs(allDrugs);
                     renderDrugList();
                     resetAddForm();
-                    // If this drug was selected on the main page, refresh it
                     if (state.selectedDrug && state.selectedDrug.id === editingDrugId) {
-                        // Re-select the updated drug
                         const updatedDrug = allDrugs.find(d => d.id === editingDrugId);
                         if (updatedDrug) {
-                            // Force re-select
                             state.selectedDrug = updatedDrug;
                             drugSearchInput.value = updatedDrug.name;
                             state.selectedFormulation = updatedDrug.formulations[0];
@@ -1863,7 +1998,7 @@
                     showFormError('Error: drug not found.');
                 }
             } else {
-                // ---- ADD NEW DRUG ----
+                // ADD NEW
                 const newDrug = {
                     id: generateId(),
                     name: name,
@@ -1871,6 +2006,7 @@
                     formulations: formulations,
                     concMap: concMap,
                     dosage: dosage,
+                    cautions: cautions,
                     brandLock: {}
                 };
                 allDrugs.push(newDrug);
@@ -1879,7 +2015,7 @@
                 resetAddForm();
                 alert(`✅ Drug "${name}" added successfully!`);
             }
-            newDrugFormulations.removeEventListener('input', buildConcInputs);
+            newDrugFormulations.removeEventListener('input', () => buildConcInputs());
         }
 
         function showFormError(msg) {
@@ -1887,7 +2023,6 @@
             formError.classList.add('show');
         }
 
-        // ---- Event listeners for Add/Edit form ----
         addDrugBtn.addEventListener('click', openAddForm);
         cancelDrugBtn.addEventListener('click', resetAddForm);
         saveDrugBtn.addEventListener('click', validateAndSaveDrug);
@@ -2114,7 +2249,7 @@
         }
 
         // ============================================================
-        //  CONCENTRATION UI RENDER (with live listeners)
+        //  CONCENTRATION UI RENDER
         // ============================================================
         function renderConcentrationUI() {
             const drug = state.selectedDrug;
@@ -2264,11 +2399,12 @@
         }
 
         // ============================================================
-        //  PERFORM CALCULATION
+        //  PERFORM CALCULATION (with CAUTION DISPLAY)
         // ============================================================
         function performCalculation() {
             statusMsg.classList.remove('show');
             resultCard.classList.remove('show');
+            cautionBanner.classList.remove('show');
 
             const animalId = state.selectedAnimal;
             const weight = parseFloat(weightInput.value);
@@ -2383,6 +2519,25 @@
 
             resultCard.classList.add('show');
             statusMsg.classList.remove('show');
+
+            // ---- ⚠️ DISPLAY CAUTION ----
+            const cautionMsg = drug.cautions?.[animalId] || '';
+            if (cautionMsg) {
+                cautionText.textContent = cautionMsg;
+                cautionBanner.classList.add('show');
+                // Check for toxicity keywords
+                const lowerMsg = cautionMsg.toLowerCase();
+                if (lowerMsg.includes('toxic') || lowerMsg.includes('do not') || lowerMsg.includes('avoid') || lowerMsg
+                    .includes('never')) {
+                    cautionBanner.className = 'caution-banner show danger';
+                    cautionBanner.querySelector('.caution-icon').textContent = '🚫';
+                } else {
+                    cautionBanner.className = 'caution-banner show warning';
+                    cautionBanner.querySelector('.caution-icon').textContent = '⚠️';
+                }
+            } else {
+                cautionBanner.classList.remove('show');
+            }
         }
 
         // ============================================================
@@ -2452,6 +2607,7 @@
         function clearResult() {
             resultCard.classList.remove('show');
             statusMsg.classList.remove('show');
+            cautionBanner.classList.remove('show');
         }
 
         // ============================================================
