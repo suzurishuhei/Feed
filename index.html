@@ -354,6 +354,7 @@
             border-radius: 20px;
             padding: 14px 16px;
             border-left: 5px solid #86efac;
+            position: relative;
         }
         .drug-card .d-name {
             font-weight: 700;
@@ -393,6 +394,45 @@
             padding: 0 8px;
             border-radius: 40px;
             border: 1px solid #e2e8f0;
+        }
+        .drug-card .d-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            border-top: 1px solid #dcfce7;
+            padding-top: 10px;
+        }
+        .drug-card .d-actions button {
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .drug-card .d-actions .edit-btn {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #86efac;
+        }
+        .drug-card .d-actions .edit-btn:hover {
+            background: #dcfce7;
+            transform: scale(1.02);
+        }
+        .drug-card .d-actions .delete-btn {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+        .drug-card .d-actions .delete-btn:hover {
+            background: #fee2e2;
+            transform: scale(1.02);
         }
         .no-drugs-msg {
             text-align: center;
@@ -1369,7 +1409,7 @@
         };
 
         let historyEntries = [];
-        let isCalculating = false;
+        let editingDrugId = null; // null = add mode, string = edit mode
 
         // ============================================================
         //  DOM REFS
@@ -1504,7 +1544,7 @@
         clearHistoryBtn.addEventListener('click', clearHistory);
 
         // ============================================================
-        //  DRUG LIST UI
+        //  DRUG LIST UI (with Edit & Delete)
         // ============================================================
         function renderDrugList() {
             const drugs = allDrugs;
@@ -1531,40 +1571,127 @@
                                     `<span>${species}: ${val} mg/kg</span>`
                                 ).join('')}
                             </div>
+                            <div class="d-actions">
+                                <button class="edit-btn" data-id="${d.id}">✏️ Edit</button>
+                                <button class="delete-btn" data-id="${d.id}">🗑️ Delete</button>
+                            </div>
                         </div>
                     `;
             }).join('');
+
+            // Attach event listeners for edit/delete
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.id;
+                    const drug = allDrugs.find(d => d.id === id);
+                    if (drug) openEditForm(drug);
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.id;
+                    deleteDrug(id);
+                });
+            });
         }
 
         // ============================================================
-        //  ADD DRUG FORM
+        //  DELETE DRUG
         // ============================================================
-        function buildConcInputs() {
+        function deleteDrug(id) {
+            const drug = allDrugs.find(d => d.id === id);
+            if (!drug) return;
+            if (!confirm(`Are you sure you want to delete "${drug.name}"?`)) return;
+
+            allDrugs = allDrugs.filter(d => d.id !== id);
+            saveDrugs(allDrugs);
+            renderDrugList();
+
+            // If the deleted drug was selected on the main page, clear the selection
+            if (state.selectedDrug && state.selectedDrug.id === id) {
+                state.selectedDrug = null;
+                state.selectedFormulation = null;
+                drugSearchInput.value = '';
+                formulationChips.innerHTML = `<span class="text-sm">Select a drug first</span>`;
+                concInputArea.innerHTML = `<span class="text-sm" style="color:#94a3b8;">Select a formulation first</span>`;
+                resultCard.classList.remove('show');
+            }
+            alert(`🗑️ "${drug.name}" deleted.`);
+        }
+
+        // ============================================================
+        //  OPEN EDIT FORM
+        // ============================================================
+        function openEditForm(drug) {
+            editingDrugId = drug.id;
+            // Populate basic fields
+            newDrugName.value = drug.name;
+            newDrugBrands.value = drug.brands.join(', ');
+            newDrugFormulations.value = drug.formulations.join(', ');
+
+            // Open the form
+            addDrugForm.classList.add('open');
+            buildSpeciesDoseInputs();
+
+            // Populate species doses
+            for (const a of ANIMALS) {
+                const inp = document.getElementById(`dose_${a.id}`);
+                if (inp) {
+                    inp.value = drug.dosage[a.id] !== undefined ? drug.dosage[a.id] : '';
+                }
+            }
+
+            // Build concentration rows with existing concMap
+            buildConcInputs(drug.concMap);
+
+            // Change button text to "Update"
+            saveDrugBtn.textContent = '💾 Update Drug';
+
+            // Remove any existing listener to avoid double-save, we handle it in saveDrugBtn click
+            // We'll use the same validateAndSaveDrug, but it will check editingDrugId
+        }
+
+        // ============================================================
+        //  ADD DRUG FORM - BUILD CONCENTRATION ROWS (with prefill)
+        // ============================================================
+        function buildConcInputs(prefillConcMap = null) {
             const formulationsRaw = newDrugFormulations.value.trim();
             const formulations = formulationsRaw ? formulationsRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
             if (formulations.length === 0) {
                 newDrugConcsContainer.innerHTML = `<span class="text-sm">Enter formulations first</span>`;
                 return;
             }
+
             let html = '';
             formulations.forEach((form, idx) => {
+                let prefillData = null;
+                if (prefillConcMap && prefillConcMap[form]) {
+                    prefillData = prefillConcMap[form];
+                }
+
+                let selectedType = prefillData ? prefillData.type : 'liquid';
+                let val1 = prefillData ? (prefillData.mg || prefillData.value || prefillData.mgPerTab || '') : '';
+                let val2 = prefillData && prefillData.type === 'liquid' ? (prefillData.ml || '') : '';
+
                 html += `
                         <div class="conc-row-item" data-idx="${idx}">
                             <span class="conc-label">${form}</span>
                             <select class="conc-type-select" data-idx="${idx}">
-                                <option value="liquid">Liquid</option>
-                                <option value="percent">%</option>
-                                <option value="tablet">Tablet</option>
+                                <option value="liquid" ${selectedType === 'liquid' ? 'selected' : ''}>Liquid</option>
+                                <option value="percent" ${selectedType === 'percent' ? 'selected' : ''}>%</option>
+                                <option value="tablet" ${selectedType === 'tablet' ? 'selected' : ''}>Tablet</option>
                             </select>
-                            <input type="number" class="conc-val1" placeholder="value" step="any" />
-                            <span class="conc-label conc-label2">mg</span>
-                            <input type="number" class="conc-val2" placeholder="ml" step="any" style="display:inline-block;" />
-                            <span class="conc-label conc-label3" style="display:inline-block;">ml</span>
+                            <input type="number" class="conc-val1" placeholder="value" step="any" value="${val1}" />
+                            <span class="conc-label conc-label2">${selectedType === 'liquid' ? 'mg' : selectedType === 'percent' ? '%' : 'mg/tab'}</span>
+                            <input type="number" class="conc-val2" placeholder="ml" step="any" style="${selectedType === 'liquid' ? 'display:inline-block;' : 'display:none;'}" value="${val2}" />
+                            <span class="conc-label conc-label3" style="${selectedType === 'liquid' ? 'display:inline-block;' : 'display:none;'}">ml</span>
                         </div>
                     `;
             });
             newDrugConcsContainer.innerHTML = html;
 
+            // Add event listeners to toggle fields based on type select
             document.querySelectorAll('.conc-type-select').forEach(sel => {
                 sel.addEventListener('change', function() {
                     const idx = this.dataset.idx;
@@ -1595,6 +1722,7 @@
                         label3.style.display = 'none';
                     }
                 });
+                // Trigger initial
                 sel.dispatchEvent(new Event('change'));
             });
         }
@@ -1609,6 +1737,7 @@
         }
 
         function resetAddForm() {
+            editingDrugId = null;
             newDrugName.value = '';
             newDrugBrands.value = '';
             newDrugFormulations.value = '';
@@ -1618,15 +1747,21 @@
             formError.textContent = '';
             addDrugForm.classList.remove('open');
             newDrugFormulations.removeEventListener('input', buildConcInputs);
+            saveDrugBtn.textContent = '💾 Save Drug';
         }
 
         function openAddForm() {
+            resetAddForm();
             addDrugForm.classList.add('open');
             buildSpeciesDoseInputs();
             buildConcInputs();
-            newDrugFormulations.addEventListener('input', buildConcInputs);
+            newDrugFormulations.addEventListener('input', () => buildConcInputs());
+            saveDrugBtn.textContent = '💾 Save Drug';
         }
 
+        // ============================================================
+        //  VALIDATE & SAVE (handles both Add and Update)
+        // ============================================================
         function validateAndSaveDrug() {
             const name = newDrugName.value.trim();
             if (!name) {
@@ -1690,22 +1825,61 @@
                 dosage[a.id] = val;
             }
 
-            const newDrug = {
-                id: generateId(),
-                name: name,
-                brands: brands,
-                formulations: formulations,
-                concMap: concMap,
-                dosage: dosage,
-                brandLock: {}
-            };
-
-            allDrugs.push(newDrug);
-            saveDrugs(allDrugs);
-            renderDrugList();
-            resetAddForm();
+            if (editingDrugId) {
+                // ---- UPDATE EXISTING DRUG ----
+                const index = allDrugs.findIndex(d => d.id === editingDrugId);
+                if (index !== -1) {
+                    allDrugs[index] = {
+                        ...allDrugs[index],
+                        name: name,
+                        brands: brands,
+                        formulations: formulations,
+                        concMap: concMap,
+                        dosage: dosage,
+                        brandLock: allDrugs[index].brandLock || {}
+                    };
+                    saveDrugs(allDrugs);
+                    renderDrugList();
+                    resetAddForm();
+                    // If this drug was selected on the main page, refresh it
+                    if (state.selectedDrug && state.selectedDrug.id === editingDrugId) {
+                        // Re-select the updated drug
+                        const updatedDrug = allDrugs.find(d => d.id === editingDrugId);
+                        if (updatedDrug) {
+                            // Force re-select
+                            state.selectedDrug = updatedDrug;
+                            drugSearchInput.value = updatedDrug.name;
+                            state.selectedFormulation = updatedDrug.formulations[0];
+                            if (updatedDrug.concMap && updatedDrug.concMap[state.selectedFormulation]) {
+                                applyConcData(updatedDrug.concMap[state.selectedFormulation]);
+                            }
+                            renderFormulations();
+                            renderConcentrationUI();
+                            calculateLive();
+                        }
+                    }
+                    alert(`✅ Drug "${name}" updated successfully!`);
+                } else {
+                    showFormError('Error: drug not found.');
+                }
+            } else {
+                // ---- ADD NEW DRUG ----
+                const newDrug = {
+                    id: generateId(),
+                    name: name,
+                    brands: brands,
+                    formulations: formulations,
+                    concMap: concMap,
+                    dosage: dosage,
+                    brandLock: {}
+                };
+                allDrugs.push(newDrug);
+                saveDrugs(allDrugs);
+                renderDrugList();
+                resetAddForm();
+                alert(`✅ Drug "${name}" added successfully!`);
+            }
             newDrugFormulations.removeEventListener('input', buildConcInputs);
-            alert(`✅ Drug "${name}" added successfully!`);
         }
 
         function showFormError(msg) {
@@ -1713,6 +1887,7 @@
             formError.classList.add('show');
         }
 
+        // ---- Event listeners for Add/Edit form ----
         addDrugBtn.addEventListener('click', openAddForm);
         cancelDrugBtn.addEventListener('click', resetAddForm);
         saveDrugBtn.addEventListener('click', validateAndSaveDrug);
@@ -1741,7 +1916,6 @@
                             allDrugs = imported;
                             saveDrugs(allDrugs);
                             renderDrugList();
-                            // Refresh main page
                             if (allDrugs.length > 0 && !state.selectedDrug) {
                                 const defaultDrug = allDrugs[0];
                                 state.selectedDrug = defaultDrug;
@@ -1754,7 +1928,6 @@
                                 renderConcentrationUI();
                             }
                             alert('✅ Drugs imported successfully!');
-                            // Trigger live calculation
                             calculateLive();
                         }
                     } else {
@@ -2072,17 +2245,15 @@
         }
 
         // ============================================================
-        //  LIVE CALCULATION (debounced for weight)
+        //  LIVE CALCULATION
         // ============================================================
         let weightTimeout = null;
 
         function calculateLive() {
-            // Clear any pending timeout for weight
             if (weightTimeout) {
                 clearTimeout(weightTimeout);
                 weightTimeout = null;
             }
-            // For weight, debounce 150ms to avoid excessive updates while typing
             if (document.activeElement === weightInput) {
                 weightTimeout = setTimeout(() => {
                     performCalculation();
@@ -2102,7 +2273,6 @@
             const animalId = state.selectedAnimal;
             const weight = parseFloat(weightInput.value);
             if (!weight || weight <= 0) {
-                // Don't show error for live calc, just hide result
                 resultCard.classList.remove('show');
                 return;
             }
@@ -2187,7 +2357,6 @@
             }
 
             const animalName = ANIMALS.find(a => a.id === animalId)?.name || animalId;
-            const animalEmoji = ANIMALS.find(a => a.id === animalId)?.emoji || '🐾';
             const finalDoseStr = `${finalDose} ${resultUnitStr}`;
 
             resultValue.textContent = finalDose;
@@ -2214,19 +2383,14 @@
 
             resultCard.classList.add('show');
             statusMsg.classList.remove('show');
-
-            // Only save to history when the user clicks the button, not on every live update
-            // We'll keep the button for explicit history saves
         }
 
         // ============================================================
-        //  BUTTON CALCULATE (with history save)
+        //  BUTTON CALCULATE (with history)
         // ============================================================
         function calculateWithHistory() {
-            // First run the calculation to update UI
             performCalculation();
 
-            // Then save to history if we have a valid result
             const animalId = state.selectedAnimal;
             const weight = parseFloat(weightInput.value);
             if (!weight || weight <= 0) return;
@@ -2311,10 +2475,8 @@
         // ============================================================
         //  EVENT BINDINGS
         // ============================================================
-        // Weight: live calculation with debounce
         weightInput.addEventListener('input', calculateLive);
 
-        // Drug search: just show dropdown, selection triggers live calc via click
         drugSearchInput.addEventListener('input', (e) => {
             const val = e.target.value;
             if (val.length > 0) {
@@ -2322,7 +2484,6 @@
             } else {
                 drugDropdown.classList.remove('open');
             }
-            // Don't clear result, just keep it as is
         });
 
         drugSearchInput.addEventListener('blur', () => {
@@ -2334,10 +2495,8 @@
             }
         });
 
-        // Calculate button: does the calculation AND saves to history
         calcBtn.addEventListener('click', calculateWithHistory);
 
-        // Enter key: trigger calculation with history
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 if (document.activeElement === weightInput || document.activeElement === drugSearchInput) {
@@ -2369,7 +2528,6 @@
             weightInput.value = 5;
             state.weight = 5;
 
-            // Initial calculation (after a tiny delay so DOM is ready)
             setTimeout(() => performCalculation(), 100);
         }
 
