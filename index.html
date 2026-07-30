@@ -22,17 +22,552 @@
             padding: 20px;
         }
 
-        .phone-frame {
+        .app-wrapper {
             max-width: 480px;
             width: 100%;
+            height: 90vh;
+            max-height: 820px;
             background: #ffffff;
             border-radius: 40px;
             box-shadow: 0 20px 60px rgba(4, 120, 87, 0.12), 0 8px 24px rgba(0, 0, 0, 0.04);
-            padding: 28px 22px 34px;
             border: 1px solid #e6f7ec;
             position: relative;
+            overflow: hidden;
         }
 
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+            overflow-y: auto;
+            padding: 28px 22px 34px;
+            overscroll-behavior: contain;
+        }
+
+        .page::-webkit-scrollbar {
+            width: 4px;
+        }
+        .page::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        .page::-webkit-scrollbar-thumb {
+            background: #86efac;
+            border-radius: 10px;
+        }
+
+        #pageMain {
+            transform: translateX(0);
+            z-index: 2;
+        }
+        #pageMain.slide-out {
+            transform: translateX(-35%);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        #pageSettings {
+            transform: translateX(100%);
+            z-index: 3;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            background: #fafffe;
+        }
+        #pageSettings.slide-in {
+            transform: translateX(0);
+        }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 22px 16px;
+            border-bottom: 2px solid #dcfce7;
+            background: #ffffff;
+            flex-shrink: 0;
+        }
+        .settings-header .back-btn {
+            background: #f1f5f9;
+            border: 2px solid #e2efe8;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: #334155;
+            flex-shrink: 0;
+        }
+        .settings-header .back-btn:hover {
+            background: #dcfce7;
+            border-color: #059669;
+        }
+        .settings-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #065f46;
+        }
+
+        .settings-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 22px 34px;
+        }
+        .settings-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        .settings-content::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        .settings-content::-webkit-scrollbar-thumb {
+            background: #86efac;
+            border-radius: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 60px;
+            margin-bottom: 20px;
+            border: 1px solid #e2efe8;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: transparent;
+            color: #64748b;
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-btn.active {
+            background: #065f46;
+            color: white;
+            box-shadow: 0 4px 12px rgba(6, 95, 70, 0.2);
+        }
+        .tab-btn:hover:not(.active) {
+            background: #dcfce7;
+            color: #065f46;
+        }
+        .tab-pane {
+            display: none;
+            animation: fadeUp 0.25s ease;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ---- HISTORY ---- */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-bottom: 12px;
+        }
+        .history-item {
+            background: #fafffe;
+            border: 1px solid #dcfce7;
+            border-radius: 20px;
+            padding: 14px 18px;
+            border-left: 5px solid #86efac;
+        }
+        .history-item .h-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .history-item .h-title {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 16px;
+        }
+        .history-item .h-title .h-animal {
+            background: #dcfce7;
+            padding: 0 10px;
+            border-radius: 40px;
+            font-size: 13px;
+            color: #065f46;
+            margin-right: 6px;
+        }
+        .history-item .h-dose {
+            font-weight: 800;
+            color: #065f46;
+            font-size: 18px;
+            white-space: nowrap;
+            background: #ecfdf5;
+            padding: 2px 14px;
+            border-radius: 40px;
+            border: 1px solid #86efac;
+        }
+        .history-item .h-details {
+            font-size: 14px;
+            color: #475569;
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+        .history-item .h-details span {
+            background: #f8fafc;
+            padding: 2px 12px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            font-size: 13px;
+        }
+        .history-item .h-time {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+        .history-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+        }
+        .history-empty .big-emoji {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .clear-history-btn {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+            margin-top: 8px;
+            width: fit-content;
+            align-self: center;
+        }
+        .clear-history-btn:hover {
+            background: #fee2e2;
+            border-color: #f87171;
+        }
+        .history-stats {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* ---- DRUG LIST ---- */
+        .drug-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .drug-list-header h3 {
+            font-size: 16px;
+            color: #0f172a;
+        }
+        .drug-list-header .actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .import-export-btn {
+            background: #f1f5f9;
+            border: 2px solid #e2efe8;
+            border-radius: 40px;
+            padding: 8px 14px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .import-export-btn:hover {
+            background: #dcfce7;
+            border-color: #86efac;
+            color: #065f46;
+        }
+        .add-drug-btn {
+            background: #065f46;
+            border: none;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .add-drug-btn:hover {
+            background: #047857;
+            transform: scale(1.02);
+        }
+
+        .drug-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-bottom: 12px;
+        }
+        .drug-card {
+            background: #fafffe;
+            border: 1px solid #dcfce7;
+            border-radius: 20px;
+            padding: 14px 16px;
+            border-left: 5px solid #86efac;
+        }
+        .drug-card .d-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: #0f172a;
+        }
+        .drug-card .d-brands {
+            font-size: 13px;
+            color: #475569;
+            margin: 4px 0;
+        }
+        .drug-card .d-formulations {
+            font-size: 13px;
+            color: #475569;
+        }
+        .drug-card .d-concs {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+            background: #f8fafc;
+            padding: 4px 12px;
+            border-radius: 40px;
+            display: inline-block;
+        }
+        .drug-card .d-doses {
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 12px;
+            font-size: 12px;
+            background: #f8fafc;
+            padding: 6px 12px;
+            border-radius: 40px;
+        }
+        .drug-card .d-doses span {
+            background: white;
+            padding: 0 8px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+        }
+        .no-drugs-msg {
+            text-align: center;
+            padding: 30px 20px;
+            color: #94a3b8;
+        }
+
+        /* ---- ADD DRUG FORM ---- */
+        .add-drug-form {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 20px;
+            margin-top: 12px;
+            border: 2px solid #dcfce7;
+            display: none;
+            animation: fadeUp 0.25s ease;
+        }
+        .add-drug-form.open {
+            display: block;
+        }
+        .add-drug-form .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 16px;
+        }
+        .add-drug-form .form-grid .full-width {
+            grid-column: 1 / -1;
+        }
+        .add-drug-form .form-grid label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1e293b;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .add-drug-form .form-grid input,
+        .add-drug-form .form-grid select,
+        .add-drug-form .form-grid textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e2efe8;
+            border-radius: 40px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            outline: none;
+            transition: 0.15s;
+        }
+        .add-drug-form .form-grid input:focus,
+        .add-drug-form .form-grid select:focus,
+        .add-drug-form .form-grid textarea:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.08);
+        }
+        .add-drug-form .form-grid textarea {
+            border-radius: 20px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .conc-rows-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .conc-row-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 0.8fr 0.8fr;
+            gap: 8px;
+            align-items: center;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 40px;
+            border: 1px solid #e2efe8;
+        }
+        .conc-row-item input,
+        .conc-row-item select {
+            padding: 6px 10px;
+            border: 2px solid #e2efe8;
+            border-radius: 40px;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            outline: none;
+            width: 100%;
+        }
+        .conc-row-item input:focus,
+        .conc-row-item select:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.06);
+        }
+        .conc-row-item .conc-label {
+            font-size: 13px;
+            color: #475569;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .species-doses-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 8px 12px;
+        }
+        .species-doses-grid .species-input {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .species-doses-grid .species-input label {
+            font-weight: 500;
+            font-size: 13px;
+            color: #334155;
+            min-width: 32px;
+            margin-bottom: 0;
+        }
+        .species-doses-grid .species-input input {
+            width: 70px;
+            padding: 6px 8px;
+            font-size: 14px;
+            border: 2px solid #e2efe8;
+            border-radius: 40px;
+            text-align: center;
+            background: white;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+        .species-doses-grid .species-input input:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.06);
+        }
+
+        .add-drug-form .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            justify-content: flex-end;
+        }
+        .add-drug-form .form-actions button {
+            padding: 10px 28px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            transition: 0.15s;
+        }
+        .add-drug-form .form-actions .save-btn {
+            background: #065f46;
+            color: white;
+        }
+        .add-drug-form .form-actions .save-btn:hover {
+            background: #047857;
+        }
+        .add-drug-form .form-actions .cancel-btn {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        .add-drug-form .form-actions .cancel-btn:hover {
+            background: #e2e8f0;
+        }
+        .form-error {
+            color: #b91c1c;
+            font-size: 13px;
+            margin-top: 6px;
+            display: none;
+            grid-column: 1 / -1;
+        }
+        .form-error.show {
+            display: block;
+        }
+
+        /* ---- MAIN PAGE ---- */
         .app-header {
             display: flex;
             align-items: center;
@@ -41,7 +576,6 @@
             padding-bottom: 12px;
             border-bottom: 2px solid #dcfce7;
         }
-
         .app-header h1 {
             font-size: 26px;
             font-weight: 700;
@@ -51,7 +585,6 @@
             align-items: center;
             gap: 6px;
         }
-
         .app-header h1 span {
             background: #065f46;
             color: white;
@@ -62,7 +595,6 @@
             letter-spacing: 0.3px;
             margin-left: 4px;
         }
-
         .header-badge {
             margin-left: auto;
             background: #dcfce7;
@@ -74,7 +606,6 @@
             border: 1px solid #86efac;
             margin-right: 8px;
         }
-
         .settings-btn {
             background: #f1f5f9;
             border: 2px solid #e2efe8;
@@ -90,17 +621,11 @@
             color: #334155;
             flex-shrink: 0;
         }
-
         .settings-btn:hover {
             background: #dcfce7;
             border-color: #059669;
             transform: rotate(60deg);
         }
-
-        .settings-btn:active {
-            transform: scale(0.9);
-        }
-
         .section-label {
             font-size: 15px;
             font-weight: 600;
@@ -110,7 +635,6 @@
             align-items: center;
             gap: 8px;
         }
-
         .section-label .step {
             background: #dcfce7;
             color: #065f46;
@@ -123,7 +647,6 @@
             align-items: center;
             justify-content: center;
         }
-
         .animal-grid {
             display: flex;
             gap: 8px;
@@ -132,11 +655,9 @@
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
-
         .animal-grid::-webkit-scrollbar {
             display: none;
         }
-
         .animal-card {
             flex: 0 0 auto;
             display: flex;
@@ -153,19 +674,16 @@
             min-width: 62px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
-
         .animal-card.active {
             border-color: #059669;
             background: #ecfdf5;
             box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.12);
             transform: scale(1.03);
         }
-
         .animal-card.active .name {
             color: #065f46;
             font-weight: 700;
         }
-
         .animal-emoji-wrap {
             display: inline-flex;
             align-items: center;
@@ -180,17 +698,14 @@
             transition: all 0.15s ease;
             box-shadow: 0 2px 6px rgba(5, 150, 105, 0.08);
         }
-
         .animal-card.active .animal-emoji-wrap {
             background: #065f46;
             border-color: #065f46;
             box-shadow: 0 4px 12px rgba(6, 95, 70, 0.25);
         }
-
         .animal-card.active .animal-emoji-wrap .emoji {
             filter: brightness(0) invert(1);
         }
-
         .animal-card .name {
             font-size: 11px;
             font-weight: 600;
@@ -199,7 +714,6 @@
             margin-top: 1px;
             white-space: nowrap;
         }
-
         .weight-input-wrap {
             display: flex;
             align-items: center;
@@ -210,12 +724,10 @@
             transition: border 0.2s;
             margin-bottom: 6px;
         }
-
         .weight-input-wrap:focus-within {
             border-color: #059669;
             box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.08);
         }
-
         .weight-input-wrap input {
             border: none;
             background: transparent;
@@ -227,13 +739,11 @@
             color: #0f172a;
             font-family: 'Inter', sans-serif;
         }
-
         .weight-input-wrap input::placeholder {
             color: #94a3b8;
             font-weight: 400;
             font-size: 17px;
         }
-
         .weight-input-wrap .kg-label {
             font-weight: 700;
             color: #475569;
@@ -243,12 +753,10 @@
             padding: 8px 18px;
             border-radius: 40px;
         }
-
         .search-wrap {
             position: relative;
             margin-bottom: 8px;
         }
-
         .search-wrap input {
             width: 100%;
             padding: 14px 20px;
@@ -262,17 +770,14 @@
             font-family: 'Inter', sans-serif;
             color: #0f172a;
         }
-
         .search-wrap input::placeholder {
             color: #94a3b8;
             font-weight: 400;
         }
-
         .search-wrap input:focus {
             border-color: #059669;
             box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.08);
         }
-
         .search-dropdown {
             position: absolute;
             top: calc(100% + 6px);
@@ -288,11 +793,9 @@
             display: none;
             padding: 8px;
         }
-
         .search-dropdown.open {
             display: block;
         }
-
         .dropdown-item {
             padding: 12px 16px;
             border-radius: 16px;
@@ -303,20 +806,16 @@
             align-items: center;
             border-bottom: 1px solid #f1f5f9;
         }
-
         .dropdown-item:last-child {
             border-bottom: none;
         }
-
         .dropdown-item:hover {
             background: #ecfdf5;
         }
-
         .dropdown-item .drug-name {
             font-weight: 600;
             color: #0f172a;
         }
-
         .dropdown-item .brand-tag {
             font-size: 13px;
             color: #475569;
@@ -324,14 +823,12 @@
             padding: 2px 12px;
             border-radius: 40px;
         }
-
         .chips-wrap {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin: 6px 0 12px 0;
         }
-
         .chip {
             padding: 10px 20px;
             border-radius: 60px;
@@ -347,14 +844,12 @@
             gap: 6px;
             flex: 0 0 auto;
         }
-
         .chip.active {
             background: #065f46;
             border-color: #065f46;
             color: white;
             box-shadow: 0 4px 10px rgba(6, 95, 70, 0.15);
         }
-
         .chip:active {
             transform: scale(0.96);
         }
@@ -362,62 +857,61 @@
         .conc-row {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             background: #fafffe;
             border: 2px solid #e2efe8;
             border-radius: 60px;
-            padding: 4px 4px 4px 20px;
+            padding: 4px 12px 4px 20px;
             margin: 8px 0 12px 0;
             transition: border 0.2s;
+            flex-wrap: wrap;
         }
-
         .conc-row:focus-within {
             border-color: #059669;
             box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.06);
         }
-
         .conc-row input {
             border: none;
             background: transparent;
-            padding: 12px 0;
+            padding: 10px 0;
             font-size: 18px;
             font-weight: 600;
-            width: 80px;
+            width: 60px;
             outline: none;
             font-family: 'Inter', sans-serif;
             color: #0f172a;
+            text-align: center;
         }
-
-        .conc-row .unit-toggle {
-            display: flex;
-            background: #f1f5f9;
-            border-radius: 40px;
-            padding: 4px;
-            margin-left: auto;
-            margin-right: 4px;
-            gap: 2px;
+        .conc-row input::-webkit-inner-spin-button,
+        .conc-row input::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
-
-        .unit-toggle button {
-            border: none;
-            background: transparent;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 14px;
+        .conc-row input[type=number] {
+            -moz-appearance: textfield;
+        }
+        .conc-row .conc-label {
+            font-weight: 600;
             color: #475569;
-            cursor: pointer;
-            transition: 0.1s;
-            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            white-space: nowrap;
         }
-
-        .unit-toggle button.active {
-            background: #065f46;
-            color: white;
-            box-shadow: 0 2px 6px rgba(6, 95, 70, 0.2);
+        .conc-row .conc-slash {
+            font-weight: 700;
+            color: #94a3b8;
+            font-size: 20px;
+            padding: 0 2px;
         }
-
-        .conc-lock-badge {
+        .conc-row .conc-computed {
+            font-size: 14px;
+            color: #64748b;
+            background: #ecfdf5;
+            padding: 2px 12px;
+            border-radius: 40px;
+            border: 1px solid #86efac;
+            white-space: nowrap;
+        }
+        .conc-row .conc-lock-badge {
             font-size: 12px;
             background: #dcfce7;
             color: #065f46;
@@ -426,6 +920,13 @@
             font-weight: 600;
             white-space: nowrap;
             margin-left: 4px;
+        }
+        .conc-row.disabled {
+            opacity: 0.7;
+            background: #f8fafc;
+        }
+        .conc-row.disabled input {
+            cursor: not-allowed;
         }
 
         .calc-btn {
@@ -444,17 +945,14 @@
             box-shadow: 0 8px 20px rgba(6, 95, 70, 0.2);
             letter-spacing: 0.3px;
         }
-
         .calc-btn:hover {
             background: #047857;
             transform: translateY(-2px);
             box-shadow: 0 12px 28px rgba(6, 95, 70, 0.25);
         }
-
         .calc-btn:active {
             transform: scale(0.98);
         }
-
         .result-card {
             background: #fafffe;
             border: 2px solid #86efac;
@@ -464,23 +962,10 @@
             display: none;
             box-shadow: 0 6px 20px rgba(5, 150, 105, 0.06);
         }
-
         .result-card.show {
             display: block;
             animation: fadeUp 0.3s ease;
         }
-
-        @keyframes fadeUp {
-            0% {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .result-main {
             font-size: 42px;
             font-weight: 800;
@@ -491,14 +976,12 @@
             gap: 6px;
             flex-wrap: wrap;
         }
-
         .result-main .unit {
             font-size: 22px;
             font-weight: 600;
             color: #475569;
             margin-left: 4px;
         }
-
         .result-breakdown {
             margin-top: 16px;
             background: #f1fdf6;
@@ -511,18 +994,15 @@
             gap: 6px;
             border: 1px solid #dcfce7;
         }
-
         .result-breakdown .line {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
         .result-breakdown .label {
             color: #475569;
             font-weight: 500;
         }
-
         .result-breakdown .value {
             font-weight: 700;
             color: #0f172a;
@@ -531,12 +1011,10 @@
             border-radius: 40px;
             border: 1px solid #e2efe8;
         }
-
         .result-breakdown .highlight {
             color: #065f46;
             font-weight: 700;
         }
-
         .status-msg {
             font-size: 14px;
             color: #b91c1c;
@@ -547,25 +1025,13 @@
             display: none;
             border: 1px solid #fecaca;
         }
-
         .status-msg.show {
             display: block;
         }
-
         .text-sm {
             font-size: 14px;
             color: #64748b;
         }
-
-        .conc-row.disabled {
-            opacity: 0.7;
-            background: #f8fafc;
-        }
-
-        .conc-row.disabled input {
-            cursor: not-allowed;
-        }
-
         .formula-badge {
             background: #f1f5f9;
             padding: 6px 14px;
@@ -577,594 +1043,147 @@
             margin-top: 4px;
             border: 1px solid #e2e8f0;
         }
-
-        /* ===== SETTINGS OVERLAY ===== */
-        .settings-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(6px);
-            z-index: 1000;
-            display: none;
-            justify-content: center;
-            align-items: flex-end;
-            padding: 20px;
-            animation: fadeIn 0.25s ease;
-        }
-
-        .settings-overlay.open {
-            display: flex;
-        }
-
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
-
-        .settings-panel {
-            background: #ffffff;
-            border-radius: 40px 40px 0 0;
-            max-width: 480px;
-            width: 100%;
-            max-height: 85vh;
-            padding: 28px 22px 34px;
-            box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.15);
-            animation: slideUp 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #e6f7ec;
-            border-bottom: none;
-        }
-
-        @keyframes slideUp {
-            0% {
-                transform: translateY(40px);
-                opacity: 0;
-            }
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .settings-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-bottom: 16px;
-            border-bottom: 2px solid #dcfce7;
-            margin-bottom: 20px;
-        }
-
-        .settings-header h2 {
-            font-size: 22px;
-            font-weight: 700;
-            color: #065f46;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .settings-close-btn {
-            background: #f1f5f9;
-            border: none;
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            font-size: 20px;
-            cursor: pointer;
-            color: #475569;
-            transition: all 0.15s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #e2efe8;
-        }
-
-        .settings-close-btn:hover {
-            background: #dcfce7;
-            border-color: #059669;
-            color: #065f46;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 6px;
-            background: #f1f5f9;
-            padding: 4px;
-            border-radius: 60px;
-            margin-bottom: 20px;
-            border: 1px solid #e2efe8;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 10px 12px;
-            border: none;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.15s;
-            background: transparent;
-            color: #64748b;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .tab-btn.active {
-            background: #065f46;
-            color: white;
-            box-shadow: 0 4px 12px rgba(6, 95, 70, 0.2);
-        }
-
-        .tab-btn:hover:not(.active) {
-            background: #dcfce7;
-            color: #065f46;
-        }
-
-        .tab-content {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 4px;
-        }
-
-        .tab-content .tab-pane {
-            display: none;
-            animation: fadeUp 0.2s ease;
-        }
-
-        .tab-content .tab-pane.active {
-            display: block;
-        }
-
-        /* ---- HISTORY ---- */
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding-bottom: 12px;
-        }
-
-        .history-item {
-            background: #fafffe;
-            border: 1px solid #dcfce7;
-            border-radius: 20px;
-            padding: 14px 18px;
-            transition: all 0.15s;
-            border-left: 5px solid #86efac;
-        }
-
-        .history-item:hover {
-            border-color: #86efac;
-            background: #f0fdf4;
-        }
-
-        .history-item .h-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 8px;
-        }
-
-        .history-item .h-title {
-            font-weight: 700;
-            color: #0f172a;
-            font-size: 16px;
-        }
-
-        .history-item .h-title .h-animal {
-            background: #dcfce7;
-            padding: 0 10px;
-            border-radius: 40px;
+        .footer-note {
+            margin-top: 20px;
             font-size: 13px;
-            color: #065f46;
-            margin-right: 6px;
+            color: #94a3b8;
+            text-align: center;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 16px;
         }
 
-        .history-item .h-dose {
-            font-weight: 800;
-            color: #065f46;
+        .about-content {
+            padding: 20px 0;
+            color: #475569;
+            line-height: 1.6;
+        }
+        .about-content h3 {
             font-size: 18px;
-            white-space: nowrap;
-            background: #ecfdf5;
-            padding: 2px 14px;
-            border-radius: 40px;
-            border: 1px solid #86efac;
-        }
-
-        .history-item .h-details {
-            font-size: 14px;
-            color: #475569;
-            margin-top: 6px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px 16px;
-        }
-
-        .history-item .h-details span {
-            background: #f8fafc;
-            padding: 2px 12px;
-            border-radius: 40px;
-            border: 1px solid #e2e8f0;
-            font-size: 13px;
-        }
-
-        .history-item .h-time {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 6px;
-        }
-
-        .history-empty {
-            text-align: center;
-            padding: 40px 20px;
-            color: #94a3b8;
-        }
-
-        .history-empty .big-emoji {
-            font-size: 48px;
-            display: block;
-            margin-bottom: 12px;
-        }
-        .history-empty p {
-            font-weight: 500;
-        }
-
-        .clear-history-btn {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #b91c1c;
-            padding: 10px 20px;
-            border-radius: 60px;
             font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.15s;
-            font-family: 'Inter', sans-serif;
-            margin-top: 8px;
-            width: fit-content;
-            align-self: center;
+            color: #065f46;
         }
-
-        .clear-history-btn:hover {
-            background: #fee2e2;
-            border-color: #f87171;
-        }
-        .clear-history-btn:active {
-            transform: scale(0.96);
-        }
-
-        .history-stats {
-            font-size: 14px;
-            color: #64748b;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* ---- DRUG LIST ---- */
-        .drug-list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .drug-list-header h3 {
-            font-size: 16px;
-            color: #0f172a;
-        }
-
-        .add-drug-btn {
-            background: #065f46;
-            border: none;
-            color: white;
-            padding: 8px 18px;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: 0.15s;
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            border: 1px solid #065f46;
-        }
-
-        .add-drug-btn:hover {
-            background: #047857;
-            transform: scale(1.02);
-        }
-
-        .drug-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding-bottom: 12px;
-        }
-
-        .drug-card {
-            background: #fafffe;
+        .about-content hr {
+            margin: 20px 0;
             border: 1px solid #dcfce7;
-            border-radius: 20px;
-            padding: 14px 16px;
-            border-left: 5px solid #86efac;
         }
-
-        .drug-card .d-name {
-            font-weight: 700;
-            font-size: 16px;
-            color: #0f172a;
-        }
-        .drug-card .d-brands {
+        .about-content .text-muted {
             font-size: 13px;
-            color: #475569;
-            margin: 4px 0;
-        }
-        .drug-card .d-formulations {
-            font-size: 13px;
-            color: #475569;
-        }
-        .drug-card .d-doses {
-            margin-top: 6px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px 12px;
-            font-size: 12px;
-            background: #f8fafc;
-            padding: 6px 12px;
-            border-radius: 40px;
-        }
-        .drug-card .d-doses span {
-            background: white;
-            padding: 0 8px;
-            border-radius: 40px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .no-drugs-msg {
-            text-align: center;
-            padding: 30px 20px;
             color: #94a3b8;
         }
 
-        /* ---- ADD DRUG FORM (inline) ---- */
-        .add-drug-form {
-            background: #f8fafc;
-            border-radius: 24px;
-            padding: 20px;
-            margin-top: 12px;
-            border: 2px solid #dcfce7;
-            display: none;
-            animation: fadeUp 0.25s ease;
-        }
-
-        .add-drug-form.open {
-            display: block;
-        }
-
-        .add-drug-form .form-row {
-            margin-bottom: 14px;
-        }
-
-        .add-drug-form label {
-            font-weight: 600;
-            font-size: 14px;
-            color: #1e293b;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .add-drug-form input,
-        .add-drug-form textarea {
-            width: 100%;
-            padding: 10px 14px;
-            border: 2px solid #e2efe8;
-            border-radius: 40px;
-            font-size: 14px;
-            font-family: 'Inter', sans-serif;
-            background: white;
-            outline: none;
-            transition: 0.15s;
-        }
-
-        .add-drug-form input:focus,
-        .add-drug-form textarea:focus {
-            border-color: #059669;
-            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.08);
-        }
-
-        .add-drug-form textarea {
-            border-radius: 20px;
-            resize: vertical;
-            min-height: 60px;
-        }
-
-        .add-drug-form .species-doses-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px 16px;
-        }
-
-        .add-drug-form .species-doses-grid .species-input {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .add-drug-form .species-doses-grid .species-input label {
-            font-weight: 500;
-            font-size: 13px;
-            color: #334155;
-            min-width: 40px;
-        }
-
-        .add-drug-form .species-doses-grid .species-input input {
-            width: 80px;
-            padding: 6px 10px;
-            font-size: 14px;
-        }
-
-        .add-drug-form .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-        }
-
-        .add-drug-form .form-actions button {
-            padding: 10px 24px;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            border: none;
-            font-family: 'Inter', sans-serif;
-            transition: 0.15s;
-        }
-
-        .add-drug-form .form-actions .save-btn {
-            background: #065f46;
-            color: white;
-        }
-        .add-drug-form .form-actions .save-btn:hover {
-            background: #047857;
-        }
-        .add-drug-form .form-actions .cancel-btn {
-            background: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-        }
-        .add-drug-form .form-actions .cancel-btn:hover {
-            background: #e2e8f0;
-        }
-
-        .form-error {
-            color: #b91c1c;
-            font-size: 13px;
-            margin-top: 6px;
-            display: none;
-        }
-        .form-error.show {
-            display: block;
-        }
-
-        .tab-content::-webkit-scrollbar {
-            width: 4px;
-        }
-        .tab-content::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 10px;
-        }
-        .tab-content::-webkit-scrollbar-thumb {
-            background: #86efac;
-            border-radius: 10px;
+        @media (max-width: 500px) {
+            .app-wrapper {
+                height: 95vh;
+                max-height: none;
+                border-radius: 24px;
+            }
+            .page {
+                padding: 20px 16px 28px;
+            }
+            .settings-content {
+                padding: 16px;
+            }
+            .species-doses-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .conc-row-item {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+                border-radius: 20px;
+                padding: 12px;
+            }
+            .drug-list-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .drug-list-header .actions {
+                justify-content: stretch;
+            }
+            .drug-list-header .actions button {
+                flex: 1;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="phone-frame" id="app">
-        <!-- HEADER -->
-        <div class="app-header">
-            <h1>🩺 Quick Dose <span>MVP</span></h1>
-            <div class="header-badge">🐾 8 Species</div>
-            <button class="settings-btn" id="settingsToggleBtn" aria-label="Settings">⚙️</button>
-        </div>
-
-        <!-- 1. ANIMAL -->
-        <div class="section-label"><span class="step">1</span> Select Animal</div>
-        <div class="animal-grid" id="animalGrid"></div>
-
-        <!-- 2. WEIGHT -->
-        <div class="section-label" style="margin-top: 4px;"><span class="step">2</span> Weight</div>
-        <div class="weight-input-wrap">
-            <input type="number" id="weightInput" placeholder="Enter weight" min="0.1" step="0.1" value="5" />
-            <span class="kg-label">kg</span>
-        </div>
-
-        <!-- 3. DRUG / BRAND -->
-        <div class="section-label" style="margin-top: 10px;"><span class="step">3</span> Drug or Brand</div>
-        <div class="search-wrap">
-            <input type="text" id="drugSearchInput" placeholder="Search generic or brand…" autocomplete="off" />
-            <div class="search-dropdown" id="drugDropdown"></div>
-        </div>
-
-        <!-- 4. FORMULATION -->
-        <div class="section-label" style="margin-top: 10px;"><span class="step">4</span> Formulation</div>
-        <div class="chips-wrap" id="formulationChips"></div>
-
-        <!-- 5. CONCENTRATION -->
-        <div class="section-label" style="margin-top: 4px;"><span class="step">5</span> Concentration</div>
-        <div class="conc-row" id="concRow">
-            <input type="number" id="concInput" step="any" value="4" />
-            <div class="unit-toggle" id="unitToggle">
-                <button data-unit="mgml" class="active">mg/ml</button>
-                <button data-unit="percent">%</button>
+    <div class="app-wrapper">
+        <!-- ===== PAGE 1: MAIN ===== -->
+        <div class="page" id="pageMain">
+            <div class="app-header">
+                <h1>🩺 Quick Dose <span>MVP</span></h1>
+                <div class="header-badge">🐾 8 Species</div>
+                <button class="settings-btn" id="settingsToggleBtn" aria-label="Settings">⚙️</button>
             </div>
-            <span class="conc-lock-badge" id="lockBadge" style="display: none;">🔒 Auto</span>
-        </div>
 
-        <div class="formula-badge">
-            ⚡ <strong>Formula:</strong> (Weight × Species Dose Rate) ÷ Concentration
-        </div>
+            <div class="section-label"><span class="step">1</span> Select Animal</div>
+            <div class="animal-grid" id="animalGrid"></div>
 
-        <!-- CALCULATE -->
-        <button class="calc-btn" id="calcBtn">⚡ Calculate Dose</button>
-
-        <!-- Status / Error -->
-        <div class="status-msg" id="statusMsg"></div>
-
-        <!-- RESULT -->
-        <div class="result-card" id="resultCard">
-            <div class="result-main" id="resultMain">
-                <span id="resultValue">—</span>
-                <span class="unit" id="resultUnit">ml</span>
+            <div class="section-label" style="margin-top: 4px;"><span class="step">2</span> Weight</div>
+            <div class="weight-input-wrap">
+                <input type="number" id="weightInput" placeholder="Enter weight" min="0.1" step="0.1" value="5" />
+                <span class="kg-label">kg</span>
             </div>
-            <div class="result-breakdown" id="resultBreakdown">
-                <div class="line"><span class="label">🐾 Species Dose Rate</span><span class="value" id="rdDoseRate">—</span></div>
-                <div class="line"><span class="label">📐 Step 1: Weight × Dose Rate</span><span class="value" id="rdStep1">—</span></div>
-                <div class="line"><span class="label">🧪 Step 2: Total mg ÷ Concentration</span><span class="value" id="rdStep2">—</span></div>
-                <div class="line" style="border-top: 1px solid #dcfce7; padding-top: 6px; margin-top: 4px;">
-                    <span class="label" style="font-weight: 700;">💉 Final Dose</span>
-                    <span class="value highlight" id="rdFinal">—</span>
+
+            <div class="section-label" style="margin-top: 10px;"><span class="step">3</span> Drug or Brand</div>
+            <div class="search-wrap">
+                <input type="text" id="drugSearchInput" placeholder="Search generic or brand…" autocomplete="off" />
+                <div class="search-dropdown" id="drugDropdown"></div>
+            </div>
+
+            <div class="section-label" style="margin-top: 10px;"><span class="step">4</span> Formulation</div>
+            <div class="chips-wrap" id="formulationChips"></div>
+
+            <div class="section-label" style="margin-top: 4px;"><span class="step">5</span> Concentration</div>
+            <div class="conc-row" id="concRow">
+                <div id="concInputArea"></div>
+                <span class="conc-lock-badge" id="lockBadge" style="display: none;">🔒 Auto</span>
+            </div>
+
+            <div class="formula-badge">
+                ⚡ <strong>Formula:</strong> (Weight × Species Dose Rate) ÷ Concentration (mg/ml)
+            </div>
+
+            <button class="calc-btn" id="calcBtn">⚡ Calculate Dose</button>
+
+            <div class="status-msg" id="statusMsg"></div>
+
+            <div class="result-card" id="resultCard">
+                <div class="result-main" id="resultMain">
+                    <span id="resultValue">—</span>
+                    <span class="unit" id="resultUnit">ml</span>
+                </div>
+                <div class="result-breakdown" id="resultBreakdown">
+                    <div class="line"><span class="label">🐾 Species Dose Rate</span><span class="value" id="rdDoseRate">—</span></div>
+                    <div class="line"><span class="label">📐 Step 1: Weight × Dose Rate</span><span class="value" id="rdStep1">—</span></div>
+                    <div class="line"><span class="label">🧪 Step 2: Total mg ÷ Concentration</span><span class="value" id="rdStep2">—</span></div>
+                    <div class="line" style="border-top: 1px solid #dcfce7; padding-top: 6px; margin-top: 4px;">
+                        <span class="label" style="font-weight: 700;">💉 Final Dose</span>
+                        <span class="value highlight" id="rdFinal">—</span>
+                    </div>
                 </div>
             </div>
+
+            <div class="footer-note">
+                ⚕️ For demo · Always verify with a licensed vet
+            </div>
         </div>
 
-        <div style="margin-top: 20px; font-size: 13px; color: #94a3b8; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 16px;">
-            ⚕️ For demo · Always verify with a licensed vet
-        </div>
-    </div>
-
-    <!-- ============================================================
-    SETTINGS OVERLAY
-    ============================================================ -->
-    <div class="settings-overlay" id="settingsOverlay">
-        <div class="settings-panel">
+        <!-- ===== PAGE 2: SETTINGS ===== -->
+        <div class="page" id="pageSettings">
             <div class="settings-header">
+                <button class="back-btn" id="backToMainBtn" aria-label="Back">←</button>
                 <h2>⚙️ Settings</h2>
-                <button class="settings-close-btn" id="settingsCloseBtn">✕</button>
             </div>
 
-            <!-- Tabs -->
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="history">📋 History</button>
-                <button class="tab-btn" data-tab="druglist">💊 Drug List</button>
-                <button class="tab-btn" data-tab="about">ℹ️ About</button>
-            </div>
+            <div class="settings-content">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="history">📋 History</button>
+                    <button class="tab-btn" data-tab="druglist">💊 Drug List</button>
+                    <button class="tab-btn" data-tab="about">ℹ️ About</button>
+                </div>
 
-            <!-- Tab Content -->
-            <div class="tab-content">
-                <!-- HISTORY -->
                 <div class="tab-pane active" id="tab-history">
                     <div class="history-stats">
                         <span id="historyCount">0 entries</span>
@@ -1173,58 +1192,58 @@
                     <div class="history-list" id="historyList"></div>
                 </div>
 
-                <!-- DRUG LIST -->
                 <div class="tab-pane" id="tab-druglist">
                     <div class="drug-list-header">
                         <h3>💊 All Drugs</h3>
-                        <button class="add-drug-btn" id="addDrugBtn">➕ Add New</button>
+                        <div class="actions">
+                            <button class="import-export-btn" id="exportDrugsBtn">📤 Export</button>
+                            <button class="import-export-btn" id="importDrugsBtn">📥 Import</button>
+                            <button class="add-drug-btn" id="addDrugBtn">➕ Add New</button>
+                        </div>
                     </div>
-                    <!-- Inline add form -->
+                    <input type="file" id="importFileInput" accept=".json" style="display:none" />
+
                     <div class="add-drug-form" id="addDrugForm">
-                        <div class="form-row">
-                            <label>Drug Name *</label>
-                            <input type="text" id="newDrugName" placeholder="e.g., Amoxicillin" />
-                        </div>
-                        <div class="form-row">
-                            <label>Brands (comma-separated)</label>
-                            <input type="text" id="newDrugBrands" placeholder="Amoxiclav, Augmentin, Clamoxyl" />
-                        </div>
-                        <div class="form-row">
-                            <label>Formulations (comma-separated)</label>
-                            <input type="text" id="newDrugFormulations" placeholder="Injection, Tablet, Syrup" />
-                        </div>
-                        <div class="form-row">
-                            <label>Concentrations (one per line, format: Formulation:value unit)</label>
-                            <textarea id="newDrugConcs" rows="3" placeholder="Injection:150 mg/ml&#10;Tablet:500 mg/ml&#10;Syrup:50 mg/ml"></textarea>
-                        </div>
-                        <div class="form-row">
-                            <label>Dose Rates (mg/kg) for each species</label>
-                            <div class="species-doses-grid" id="speciesDosesContainer">
-                                <!-- rendered by JS -->
+                        <div class="form-grid">
+                            <div class="full-width">
+                                <label>Drug Name *</label>
+                                <input type="text" id="newDrugName" placeholder="e.g., Amoxicillin" />
+                            </div>
+                            <div>
+                                <label>Brands</label>
+                                <input type="text" id="newDrugBrands" placeholder="Amoxiclav, Augmentin" />
+                            </div>
+                            <div>
+                                <label>Formulations</label>
+                                <input type="text" id="newDrugFormulations" placeholder="Injection, Tablet, Syrup" />
+                            </div>
+                            <div class="full-width">
+                                <label>Concentrations (one per formulation)</label>
+                                <div class="conc-rows-container" id="newDrugConcsContainer"></div>
+                            </div>
+                            <div class="full-width">
+                                <label>Dose Rates (mg/kg) for each species</label>
+                                <div class="species-doses-grid" id="speciesDosesContainer"></div>
+                            </div>
+                            <div class="form-error" id="formError"></div>
+                            <div class="full-width form-actions">
+                                <button class="cancel-btn" id="cancelDrugBtn">Cancel</button>
+                                <button class="save-btn" id="saveDrugBtn">💾 Save Drug</button>
                             </div>
                         </div>
-                        <div class="form-error" id="formError"></div>
-                        <div class="form-actions">
-                            <button class="save-btn" id="saveDrugBtn">💾 Save Drug</button>
-                            <button class="cancel-btn" id="cancelDrugBtn">Cancel</button>
-                        </div>
                     </div>
 
-                    <!-- Drug list display -->
-                    <div class="drug-grid" id="drugListContainer">
-                        <!-- Rendered by JS -->
-                    </div>
+                    <div class="drug-grid" id="drugListContainer"></div>
                 </div>
 
-                <!-- ABOUT -->
                 <div class="tab-pane" id="tab-about">
-                    <div style="padding: 20px 0; color: #475569; line-height: 1.6;">
-                        <p style="font-size: 18px; font-weight: 600; color: #065f46;">🐾 Quick Dose v1.0</p>
-                        <p style="margin-top: 8px;">Veterinary dosage calculator for 8 species.</p>
-                        <p style="margin-top: 4px; font-size: 14px;">Always double-check with a licensed veterinarian.</p>
-                        <hr style="margin: 20px 0; border: 1px solid #dcfce7;" />
-                        <p style="font-size: 13px; color: #94a3b8;">Built with ❤️ for vets &amp; farmers.</p>
-                        <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">Custom drugs saved in your browser.</p>
+                    <div class="about-content">
+                        <h3>🐾 Quick Dose v1.0</h3>
+                        <p>Veterinary dosage calculator for 8 species.</p>
+                        <p style="font-size:14px;">Always double-check with a licensed veterinarian.</p>
+                        <hr />
+                        <p class="text-muted">Built with ❤️ for vets &amp; farmers.</p>
+                        <p class="text-muted" style="margin-top: 6px;">Custom drugs saved in your browser.</p>
                     </div>
                 </div>
             </div>
@@ -1254,7 +1273,10 @@
             name: 'Meloxicam',
             brands: ['Metacam', 'Mobic'],
             formulations: ['Injection', 'Tablet'],
-            concMap: { 'Injection': { value: 4, unit: 'mgml' }, 'Tablet': { value: 15, unit: 'mgml' } },
+            concMap: {
+                'Injection': { type: 'liquid', mg: 20, ml: 5 },
+                'Tablet': { type: 'tablet', mgPerTab: 15 }
+            },
             dosage: { dog: 1.0, cat: 0.1, horse: 0.6, cow: 0.5, buffalo: 0.4, sheep: 0.5, goat: 0.5, bird: 0.2 },
             brandLock: {}
         }, {
@@ -1262,8 +1284,11 @@
             name: 'Amoxicillin',
             brands: ['Amoxiclav', 'Augmentin', 'Clamoxyl'],
             formulations: ['Injection', 'Tablet', 'Syrup'],
-            concMap: { 'Injection': { value: 150, unit: 'mgml' }, 'Tablet': { value: 500, unit: 'mgml' },
-                'Syrup': { value: 50, unit: 'mgml' } },
+            concMap: {
+                'Injection': { type: 'liquid', mg: 150, ml: 1 },
+                'Tablet': { type: 'tablet', mgPerTab: 500 },
+                'Syrup': { type: 'liquid', mg: 50, ml: 1 }
+            },
             dosage: { dog: 10, cat: 10, horse: 10, cow: 10, buffalo: 10, sheep: 10, goat: 10, bird: 15 },
             brandLock: {}
         }, {
@@ -1271,15 +1296,21 @@
             name: 'Ivermectin',
             brands: ['IvoteK', 'Ivomec', 'Noromectin'],
             formulations: ['Injection', 'Oral'],
-            concMap: { 'Injection': { value: 1, unit: 'percent' }, 'Oral': { value: 1, unit: 'percent' } },
+            concMap: {
+                'Injection': { type: 'percent', value: 1 },
+                'Oral': { type: 'percent', value: 1 }
+            },
             dosage: { dog: 0.2, cat: 0.2, horse: 0.2, cow: 0.2, buffalo: 0.2, sheep: 0.15, goat: 0.2, bird: 0.2 },
-            brandLock: { 'IvoteK': { value: 1, unit: 'percent' } }
+            brandLock: { 'IvoteK': { type: 'percent', value: 1 } }
         }, {
             id: 'enrofloxacin',
             name: 'Enrofloxacin',
             brands: ['Baytril', 'Enrocure'],
             formulations: ['Injection', 'Tablet'],
-            concMap: { 'Injection': { value: 100, unit: 'mgml' }, 'Tablet': { value: 50, unit: 'mgml' } },
+            concMap: {
+                'Injection': { type: 'liquid', mg: 100, ml: 1 },
+                'Tablet': { type: 'tablet', mgPerTab: 50 }
+            },
             dosage: { dog: 5, cat: 5, horse: 5, cow: 5, buffalo: 4.5, sheep: 5, goat: 5, bird: 10 },
             brandLock: {}
         }, {
@@ -1287,31 +1318,27 @@
             name: 'Dexamethasone',
             brands: ['Azium', 'Dexone'],
             formulations: ['Injection', 'Tablet'],
-            concMap: { 'Injection': { value: 2, unit: 'mgml' }, 'Tablet': { value: 0.5, unit: 'mgml' } },
+            concMap: {
+                'Injection': { type: 'liquid', mg: 2, ml: 1 },
+                'Tablet': { type: 'tablet', mgPerTab: 0.5 }
+            },
             dosage: { dog: 0.1, cat: 0.1, horse: 0.05, cow: 0.05, buffalo: 0.04, sheep: 0.05, goat: 0.05, bird: 0.2 },
             brandLock: {}
         }];
 
         // ============================================================
-        //  DRUGS MANAGEMENT (localStorage)
+        //  DRUGS MANAGEMENT
         // ============================================================
-        const STORAGE_KEY_DRUGS = 'quickDoseDrugs';
+        const STORAGE_KEY_DRUGS = 'quickDoseDrugs_v2';
 
         function getDrugs() {
             try {
                 const stored = localStorage.getItem(STORAGE_KEY_DRUGS);
                 if (stored) {
                     const parsed = JSON.parse(stored);
-                    // merge with defaults to ensure all default drugs are present
-                    // but we want to keep user-added ones, and possibly override defaults? We'll keep defaults + user-added.
-                    // We'll combine: start with defaults, then add any custom drugs not already in defaults (by id).
-                    // But we need to handle that user might have modified a default? We'll treat user-added as separate.
-                    // For simplicity, we'll store the entire list, including defaults, and on load we use that.
-                    // If no stored, we initialize with defaults.
                     return parsed;
                 }
             } catch (e) {}
-            // init with defaults
             localStorage.setItem(STORAGE_KEY_DRUGS, JSON.stringify(DEFAULT_DRUGS));
             return DEFAULT_DRUGS;
         }
@@ -1333,12 +1360,16 @@
             weight: 5,
             selectedDrug: null,
             selectedFormulation: null,
-            concValue: 4,
-            concUnit: 'mgml',
+            concLiquidMg: 20,
+            concLiquidMl: 5,
+            concPercent: 1,
+            concTabletMg: 15,
+            concMgPerMl: 4,
             isConcLocked: false,
         };
 
         let historyEntries = [];
+        let isCalculating = false;
 
         // ============================================================
         //  DOM REFS
@@ -1346,13 +1377,17 @@
         const $ = (s) => document.querySelector(s);
         const $$ = (s) => document.querySelectorAll(s);
 
+        const pageMain = $('#pageMain');
+        const pageSettings = $('#pageSettings');
+        const settingsToggleBtn = $('#settingsToggleBtn');
+        const backToMainBtn = $('#backToMainBtn');
+
         const animalGrid = $('#animalGrid');
         const weightInput = $('#weightInput');
         const drugSearchInput = $('#drugSearchInput');
         const drugDropdown = $('#drugDropdown');
         const formulationChips = $('#formulationChips');
-        const concInput = $('#concInput');
-        const unitToggle = $('#unitToggle');
+        const concInputArea = $('#concInputArea');
         const lockBadge = $('#lockBadge');
         const concRow = $('#concRow');
         const calcBtn = $('#calcBtn');
@@ -1365,10 +1400,6 @@
         const rdFinal = $('#rdFinal');
         const statusMsg = $('#statusMsg');
 
-        // Settings
-        const settingsOverlay = $('#settingsOverlay');
-        const settingsToggleBtn = $('#settingsToggleBtn');
-        const settingsCloseBtn = $('#settingsCloseBtn');
         const historyList = $('#historyList');
         const historyCount = $('#historyCount');
         const clearHistoryBtn = $('#clearHistoryBtn');
@@ -1379,11 +1410,32 @@
         const newDrugName = $('#newDrugName');
         const newDrugBrands = $('#newDrugBrands');
         const newDrugFormulations = $('#newDrugFormulations');
-        const newDrugConcs = $('#newDrugConcs');
+        const newDrugConcsContainer = $('#newDrugConcsContainer');
         const speciesDosesContainer = $('#speciesDosesContainer');
         const saveDrugBtn = $('#saveDrugBtn');
         const cancelDrugBtn = $('#cancelDrugBtn');
         const formError = $('#formError');
+        const exportDrugsBtn = $('#exportDrugsBtn');
+        const importDrugsBtn = $('#importDrugsBtn');
+        const importFileInput = $('#importFileInput');
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        function showSettings() {
+            pageMain.classList.add('slide-out');
+            pageSettings.classList.add('slide-in');
+            renderHistory();
+            renderDrugList();
+        }
+
+        function showMain() {
+            pageMain.classList.remove('slide-out');
+            pageSettings.classList.remove('slide-in');
+        }
+
+        settingsToggleBtn.addEventListener('click', showSettings);
+        backToMainBtn.addEventListener('click', showMain);
 
         // ============================================================
         //  HISTORY
@@ -1449,6 +1501,8 @@
                 `).join('');
         }
 
+        clearHistoryBtn.addEventListener('click', clearHistory);
+
         // ============================================================
         //  DRUG LIST UI
         // ============================================================
@@ -1458,27 +1512,97 @@
                 drugListContainer.innerHTML = `<div class="no-drugs-msg">💊 No drugs added yet.</div>`;
                 return;
             }
-            drugListContainer.innerHTML = drugs.map(d => `
-                    <div class="drug-card">
-                        <div class="d-name">${d.name}</div>
-                        <div class="d-brands">Brands: ${d.brands.join(', ')}</div>
-                        <div class="d-formulations">Formulations: ${d.formulations.join(', ')}</div>
-                        <div class="d-doses">
-                            ${Object.entries(d.dosage).map(([species, val]) =>
-                                `<span>${species}: ${val} mg/kg</span>`
-                            ).join('')}
+            drugListContainer.innerHTML = drugs.map(d => {
+                const concDisplay = Object.entries(d.concMap).map(([form, data]) => {
+                    let str = '';
+                    if (data.type === 'liquid') str = `${data.mg} mg / ${data.ml} ml`;
+                    else if (data.type === 'percent') str = `${data.value} %`;
+                    else if (data.type === 'tablet') str = `${data.mgPerTab} mg/tab`;
+                    return `${form}: ${str}`;
+                }).join('; ');
+                return `
+                        <div class="drug-card">
+                            <div class="d-name">${d.name}</div>
+                            <div class="d-brands">Brands: ${d.brands.join(', ')}</div>
+                            <div class="d-formulations">Formulations: ${d.formulations.join(', ')}</div>
+                            <div class="d-concs">${concDisplay}</div>
+                            <div class="d-doses">
+                                ${Object.entries(d.dosage).map(([species, val]) =>
+                                    `<span>${species}: ${val} mg/kg</span>`
+                                ).join('')}
+                            </div>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+            }).join('');
         }
 
         // ============================================================
         //  ADD DRUG FORM
         // ============================================================
+        function buildConcInputs() {
+            const formulationsRaw = newDrugFormulations.value.trim();
+            const formulations = formulationsRaw ? formulationsRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+            if (formulations.length === 0) {
+                newDrugConcsContainer.innerHTML = `<span class="text-sm">Enter formulations first</span>`;
+                return;
+            }
+            let html = '';
+            formulations.forEach((form, idx) => {
+                html += `
+                        <div class="conc-row-item" data-idx="${idx}">
+                            <span class="conc-label">${form}</span>
+                            <select class="conc-type-select" data-idx="${idx}">
+                                <option value="liquid">Liquid</option>
+                                <option value="percent">%</option>
+                                <option value="tablet">Tablet</option>
+                            </select>
+                            <input type="number" class="conc-val1" placeholder="value" step="any" />
+                            <span class="conc-label conc-label2">mg</span>
+                            <input type="number" class="conc-val2" placeholder="ml" step="any" style="display:inline-block;" />
+                            <span class="conc-label conc-label3" style="display:inline-block;">ml</span>
+                        </div>
+                    `;
+            });
+            newDrugConcsContainer.innerHTML = html;
+
+            document.querySelectorAll('.conc-type-select').forEach(sel => {
+                sel.addEventListener('change', function() {
+                    const idx = this.dataset.idx;
+                    const row = document.querySelector(`.conc-row-item[data-idx="${idx}"]`);
+                    if (!row) return;
+                    const type = this.value;
+                    const val1 = row.querySelector('.conc-val1');
+                    const val2 = row.querySelector('.conc-val2');
+                    const label2 = row.querySelector('.conc-label2');
+                    const label3 = row.querySelector('.conc-label3');
+
+                    if (type === 'liquid') {
+                        val1.placeholder = 'mg';
+                        label2.textContent = 'mg';
+                        val2.style.display = 'inline-block';
+                        label3.style.display = 'inline-block';
+                        val2.placeholder = 'ml';
+                        label3.textContent = 'ml';
+                    } else if (type === 'percent') {
+                        val1.placeholder = '% value';
+                        label2.textContent = '%';
+                        val2.style.display = 'none';
+                        label3.style.display = 'none';
+                    } else if (type === 'tablet') {
+                        val1.placeholder = 'mg/tab';
+                        label2.textContent = 'mg/tab';
+                        val2.style.display = 'none';
+                        label3.style.display = 'none';
+                    }
+                });
+                sel.dispatchEvent(new Event('change'));
+            });
+        }
+
         function buildSpeciesDoseInputs() {
             speciesDosesContainer.innerHTML = ANIMALS.map(a => `
                     <div class="species-input">
-                        <label>${a.emoji} ${a.name}</label>
+                        <label>${a.emoji}</label>
                         <input type="number" step="any" min="0" id="dose_${a.id}" placeholder="mg/kg" />
                     </div>
                 `).join('');
@@ -1488,16 +1612,19 @@
             newDrugName.value = '';
             newDrugBrands.value = '';
             newDrugFormulations.value = '';
-            newDrugConcs.value = '';
+            newDrugConcsContainer.innerHTML = '';
             document.querySelectorAll('#speciesDosesContainer input').forEach(inp => inp.value = '');
             formError.classList.remove('show');
             formError.textContent = '';
             addDrugForm.classList.remove('open');
+            newDrugFormulations.removeEventListener('input', buildConcInputs);
         }
 
         function openAddForm() {
             addDrugForm.classList.add('open');
             buildSpeciesDoseInputs();
+            buildConcInputs();
+            newDrugFormulations.addEventListener('input', buildConcInputs);
         }
 
         function validateAndSaveDrug() {
@@ -1515,37 +1642,43 @@
                 return;
             }
 
-            // Parse concentrations
-            const concLines = newDrugConcs.value.trim().split('\n').filter(line => line.trim());
             const concMap = {};
-            for (const line of concLines) {
-                const parts = line.split(':');
-                if (parts.length !== 2) {
-                    showFormError(`Invalid concentration line: "${line}". Use format "Formulation:value unit"`);
-                    return;
-                }
-                const form = parts[0].trim();
-                const rest = parts[1].trim();
-                const match = rest.match(/^(\d+\.?\d*)\s*(mg\/ml|percent|%)$/i);
-                if (!match) {
-                    showFormError(`Invalid concentration value: "${rest}". Use e.g., "4 mg/ml" or "1 %"`);
-                    return;
-                }
-                const value = parseFloat(match[1]);
-                let unit = match[2].toLowerCase();
-                if (unit === '%') unit = 'percent';
-                if (unit === 'mg/ml') unit = 'mgml';
-                concMap[form] = { value, unit };
+            const concRows = newDrugConcsContainer.querySelectorAll('.conc-row-item');
+            if (concRows.length !== formulations.length) {
+                showFormError('Please fill concentration for each formulation.');
+                return;
             }
-            // Check that all formulations have a concentration
-            for (const f of formulations) {
-                if (!concMap[f]) {
-                    showFormError(`Missing concentration for formulation "${f}".`);
+            let error = false;
+            concRows.forEach((row, idx) => {
+                const form = formulations[idx];
+                const typeSelect = row.querySelector('.conc-type-select');
+                const type = typeSelect.value;
+                const val1 = row.querySelector('.conc-val1');
+                const val2 = row.querySelector('.conc-val2');
+                const val1Num = parseFloat(val1.value);
+                if (isNaN(val1Num) || val1Num <= 0) {
+                    showFormError(`Invalid concentration for ${form}.`);
+                    error = true;
                     return;
                 }
-            }
+                let concData = {};
+                if (type === 'liquid') {
+                    const val2Num = parseFloat(val2.value);
+                    if (isNaN(val2Num) || val2Num <= 0) {
+                        showFormError(`Invalid ml value for ${form}.`);
+                        error = true;
+                        return;
+                    }
+                    concData = { type: 'liquid', mg: val1Num, ml: val2Num };
+                } else if (type === 'percent') {
+                    concData = { type: 'percent', value: val1Num };
+                } else if (type === 'tablet') {
+                    concData = { type: 'tablet', mgPerTab: val1Num };
+                }
+                concMap[form] = concData;
+            });
+            if (error) return;
 
-            // Get species doses
             const dosage = {};
             for (const a of ANIMALS) {
                 const inp = document.getElementById(`dose_${a.id}`);
@@ -1557,7 +1690,6 @@
                 dosage[a.id] = val;
             }
 
-            // Build new drug object
             const newDrug = {
                 id: generateId(),
                 name: name,
@@ -1565,18 +1697,14 @@
                 formulations: formulations,
                 concMap: concMap,
                 dosage: dosage,
-                brandLock: {} // we don't support brandLock for custom drugs in this MVP
+                brandLock: {}
             };
 
-            // Add to allDrugs
             allDrugs.push(newDrug);
             saveDrugs(allDrugs);
             renderDrugList();
             resetAddForm();
-            // Refresh the main dropdown & state (if selected drug is null, we might want to keep current selection)
-            // We'll just re-render dropdown when user searches, but also update the internal DRUGS used in calculator.
-            // Since allDrugs is used in search, it's fine.
-            // Also update the selected drug if needed? Not necessary.
+            newDrugFormulations.removeEventListener('input', buildConcInputs);
             alert(`✅ Drug "${name}" added successfully!`);
         }
 
@@ -1584,6 +1712,69 @@
             formError.textContent = msg;
             formError.classList.add('show');
         }
+
+        addDrugBtn.addEventListener('click', openAddForm);
+        cancelDrugBtn.addEventListener('click', resetAddForm);
+        saveDrugBtn.addEventListener('click', validateAndSaveDrug);
+
+        // ============================================================
+        //  IMPORT / EXPORT
+        // ============================================================
+        function exportDrugs() {
+            const data = JSON.stringify(allDrugs, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'quick_dose_drugs.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importDrugs(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported) && imported.length > 0 && imported[0].name && imported[0].dosage) {
+                        if (confirm(`This will REPLACE all current drugs with ${imported.length} imported drugs. Continue?`)) {
+                            allDrugs = imported;
+                            saveDrugs(allDrugs);
+                            renderDrugList();
+                            // Refresh main page
+                            if (allDrugs.length > 0 && !state.selectedDrug) {
+                                const defaultDrug = allDrugs[0];
+                                state.selectedDrug = defaultDrug;
+                                drugSearchInput.value = defaultDrug.name;
+                                state.selectedFormulation = defaultDrug.formulations[0];
+                                if (defaultDrug.concMap && defaultDrug.concMap[state.selectedFormulation]) {
+                                    applyConcData(defaultDrug.concMap[state.selectedFormulation]);
+                                }
+                                renderFormulations();
+                                renderConcentrationUI();
+                            }
+                            alert('✅ Drugs imported successfully!');
+                            // Trigger live calculation
+                            calculateLive();
+                        }
+                    } else {
+                        alert('❌ Invalid JSON structure. Make sure it matches the export format.');
+                    }
+                } catch (err) {
+                    alert('❌ Failed to parse JSON file.');
+                }
+            };
+            reader.readAsText(file);
+            importFileInput.value = '';
+        }
+
+        exportDrugsBtn.addEventListener('click', exportDrugs);
+        importDrugsBtn.addEventListener('click', () => importFileInput.click());
+        importFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                importDrugs(e.target.files[0]);
+            }
+        });
 
         // ============================================================
         //  RENDER: ANIMALS
@@ -1602,13 +1793,13 @@
                 el.addEventListener('click', () => {
                     state.selectedAnimal = el.dataset.id;
                     renderAnimals();
-                    clearResult();
+                    calculateLive();
                 });
             });
         }
 
         // ============================================================
-        //  DRUG DROPDOWN (uses allDrugs)
+        //  DRUG DROPDOWN
         // ============================================================
         function renderDrugDropdown(query = '') {
             const q = query.toLowerCase().trim();
@@ -1639,7 +1830,10 @@
                 el.addEventListener('click', () => {
                     const drugId = el.dataset.id;
                     const drug = allDrugs.find(d => d.id === drugId);
-                    if (drug) selectDrug(drug);
+                    if (drug) {
+                        selectDrug(drug);
+                        calculateLive();
+                    }
                 });
             });
 
@@ -1658,27 +1852,47 @@
             const matchedBrand = drug.brands.find(b => b.toLowerCase() === inputVal.toLowerCase());
             if (matchedBrand && drug.brandLock && drug.brandLock[matchedBrand]) {
                 const lock = drug.brandLock[matchedBrand];
-                state.concValue = lock.value;
-                state.concUnit = lock.unit;
+                if (lock.type === 'liquid') {
+                    state.concLiquidMg = lock.mg;
+                    state.concLiquidMl = lock.ml;
+                    state.concMgPerMl = lock.mg / lock.ml;
+                } else if (lock.type === 'percent') {
+                    state.concPercent = lock.value;
+                    state.concMgPerMl = lock.value * 10;
+                } else if (lock.type === 'tablet') {
+                    state.concTabletMg = lock.mgPerTab;
+                    state.concMgPerMl = lock.mgPerTab;
+                }
                 state.isConcLocked = true;
             } else {
                 const firstForm = drug.formulations[0];
                 if (drug.concMap && drug.concMap[firstForm]) {
-                    state.concValue = drug.concMap[firstForm].value;
-                    state.concUnit = drug.concMap[firstForm].unit;
-                } else {
-                    state.concValue = 1;
-                    state.concUnit = 'mgml';
+                    applyConcData(drug.concMap[firstForm]);
                 }
+                state.isConcLocked = false;
             }
 
             drugSearchInput.value = drug.name;
             drugDropdown.classList.remove('open');
 
             renderFormulations();
-            updateConcUI();
+            renderConcentrationUI();
             clearResult();
             statusMsg.classList.remove('show');
+        }
+
+        function applyConcData(data) {
+            if (data.type === 'liquid') {
+                state.concLiquidMg = data.mg;
+                state.concLiquidMl = data.ml;
+                state.concMgPerMl = data.mg / data.ml;
+            } else if (data.type === 'percent') {
+                state.concPercent = data.value;
+                state.concMgPerMl = data.value * 10;
+            } else if (data.type === 'tablet') {
+                state.concTabletMg = data.mgPerTab;
+                state.concMgPerMl = data.mgPerTab;
+            }
         }
 
         // ============================================================
@@ -1702,149 +1916,349 @@
                     const form = el.dataset.form;
                     state.selectedFormulation = form;
                     if (state.selectedDrug.concMap && state.selectedDrug.concMap[form]) {
-                        const c = state.selectedDrug.concMap[form];
+                        const data = state.selectedDrug.concMap[form];
                         if (!state.isConcLocked) {
-                            state.concValue = c.value;
-                            state.concUnit = c.unit;
-                            updateConcUI();
+                            applyConcData(data);
                         }
                     }
                     renderFormulations();
-                    clearResult();
+                    renderConcentrationUI();
+                    calculateLive();
                 });
             });
 
             if (!state.selectedFormulation && forms.length > 0) {
                 state.selectedFormulation = forms[0];
                 if (state.selectedDrug.concMap && state.selectedDrug.concMap[forms[0]]) {
-                    const c = state.selectedDrug.concMap[forms[0]];
+                    const data = state.selectedDrug.concMap[forms[0]];
                     if (!state.isConcLocked) {
-                        state.concValue = c.value;
-                        state.concUnit = c.unit;
-                        updateConcUI();
+                        applyConcData(data);
                     }
                 }
                 renderFormulations();
+                renderConcentrationUI();
             }
         }
 
         // ============================================================
-        //  UPDATE CONCENTRATION UI
+        //  CONCENTRATION UI RENDER (with live listeners)
         // ============================================================
-        function updateConcUI() {
-            concInput.value = state.concValue;
-            unitToggle.querySelectorAll('button').forEach(btn => {
-                const unit = btn.dataset.unit;
-                btn.classList.toggle('active', unit === state.concUnit);
-            });
-
-            if (state.isConcLocked) {
-                concRow.classList.add('disabled');
-                lockBadge.style.display = 'inline-block';
-                concInput.disabled = true;
-            } else {
-                concRow.classList.remove('disabled');
+        function renderConcentrationUI() {
+            const drug = state.selectedDrug;
+            const form = state.selectedFormulation;
+            if (!drug || !form || !drug.concMap || !drug.concMap[form]) {
+                concInputArea.innerHTML = `<span class="text-sm" style="color:#94a3b8;">Select a formulation first</span>`;
                 lockBadge.style.display = 'none';
-                concInput.disabled = false;
+                return;
+            }
+
+            const concData = drug.concMap[form];
+            const isLocked = state.isConcLocked;
+
+            let html = '';
+            if (concData.type === 'liquid') {
+                const mgVal = state.concLiquidMg || concData.mg || 0;
+                const mlVal = state.concLiquidMl || concData.ml || 1;
+                html = `
+                        <input type="number" id="concLiquidMg" value="${mgVal}" step="any" min="0.1" />
+                        <span class="conc-label">mg</span>
+                        <span class="conc-slash">/</span>
+                        <input type="number" id="concLiquidMl" value="${mlVal}" step="any" min="0.1" />
+                        <span class="conc-label">ml</span>
+                        <span class="conc-computed" id="concComputed">→ ${(mgVal/mlVal).toFixed(2)} mg/ml</span>
+                    `;
+                setTimeout(() => {
+                    const mgInput = document.getElementById('concLiquidMg');
+                    const mlInput = document.getElementById('concLiquidMl');
+                    if (mgInput && mlInput) {
+                        mgInput.addEventListener('input', () => {
+                            updateConcFromLiquid();
+                            calculateLive();
+                        });
+                        mlInput.addEventListener('input', () => {
+                            updateConcFromLiquid();
+                            calculateLive();
+                        });
+                        if (isLocked) {
+                            mgInput.disabled = true;
+                            mlInput.disabled = true;
+                        }
+                    }
+                }, 0);
+            } else if (concData.type === 'percent') {
+                const val = state.concPercent || concData.value || 0;
+                html = `
+                        <input type="number" id="concPercent" value="${val}" step="any" min="0.1" />
+                        <span class="conc-label">%</span>
+                        <span class="conc-computed">→ ${(val * 10).toFixed(2)} mg/ml</span>
+                    `;
+                setTimeout(() => {
+                    const inp = document.getElementById('concPercent');
+                    if (inp) {
+                        inp.addEventListener('input', () => {
+                            updateConcFromPercent();
+                            calculateLive();
+                        });
+                        if (isLocked) inp.disabled = true;
+                    }
+                }, 0);
+            } else if (concData.type === 'tablet') {
+                const val = state.concTabletMg || concData.mgPerTab || 0;
+                html = `
+                        <input type="number" id="concTabletMg" value="${val}" step="any" min="0.1" />
+                        <span class="conc-label">mg per tablet</span>
+                    `;
+                setTimeout(() => {
+                    const inp = document.getElementById('concTabletMg');
+                    if (inp) {
+                        inp.addEventListener('input', () => {
+                            updateConcFromTablet();
+                            calculateLive();
+                        });
+                        if (isLocked) inp.disabled = true;
+                    }
+                }, 0);
+            }
+
+            concInputArea.innerHTML = html;
+
+            if (isLocked) {
+                lockBadge.style.display = 'inline-block';
+                concRow.classList.add('disabled');
+            } else {
+                lockBadge.style.display = 'none';
+                concRow.classList.remove('disabled');
             }
         }
 
+        // --- Update functions ---
+        function updateConcFromLiquid() {
+            const mgInput = document.getElementById('concLiquidMg');
+            const mlInput = document.getElementById('concLiquidMl');
+            if (!mgInput || !mlInput) return;
+            const mg = parseFloat(mgInput.value) || 0;
+            const ml = parseFloat(mlInput.value) || 1;
+            state.concLiquidMg = mg;
+            state.concLiquidMl = ml;
+            if (mg > 0 && ml > 0) {
+                state.concMgPerMl = mg / ml;
+            } else {
+                state.concMgPerMl = 0;
+            }
+            const computed = document.getElementById('concComputed');
+            if (computed) {
+                computed.textContent = `→ ${state.concMgPerMl.toFixed(2)} mg/ml`;
+            }
+        }
+
+        function updateConcFromPercent() {
+            const inp = document.getElementById('concPercent');
+            if (!inp) return;
+            const val = parseFloat(inp.value) || 0;
+            state.concPercent = val;
+            state.concMgPerMl = val * 10;
+            const computed = document.querySelector('#concInputArea .conc-computed');
+            if (computed) {
+                computed.textContent = `→ ${state.concMgPerMl.toFixed(2)} mg/ml`;
+            }
+        }
+
+        function updateConcFromTablet() {
+            const inp = document.getElementById('concTabletMg');
+            if (!inp) return;
+            const val = parseFloat(inp.value) || 0;
+            state.concTabletMg = val;
+            state.concMgPerMl = val;
+        }
+
         // ============================================================
-        //  CALCULATE
+        //  LIVE CALCULATION (debounced for weight)
         // ============================================================
-        function calculate() {
+        let weightTimeout = null;
+
+        function calculateLive() {
+            // Clear any pending timeout for weight
+            if (weightTimeout) {
+                clearTimeout(weightTimeout);
+                weightTimeout = null;
+            }
+            // For weight, debounce 150ms to avoid excessive updates while typing
+            if (document.activeElement === weightInput) {
+                weightTimeout = setTimeout(() => {
+                    performCalculation();
+                }, 150);
+                return;
+            }
+            performCalculation();
+        }
+
+        // ============================================================
+        //  PERFORM CALCULATION
+        // ============================================================
+        function performCalculation() {
             statusMsg.classList.remove('show');
             resultCard.classList.remove('show');
 
             const animalId = state.selectedAnimal;
             const weight = parseFloat(weightInput.value);
             if (!weight || weight <= 0) {
-                showStatus('Please enter a valid weight.', true);
+                // Don't show error for live calc, just hide result
+                resultCard.classList.remove('show');
                 return;
             }
             state.weight = weight;
 
             if (!state.selectedDrug) {
-                showStatus('Please select a drug or brand.', true);
+                resultCard.classList.remove('show');
                 return;
             }
             const drug = state.selectedDrug;
 
             if (!state.selectedFormulation) {
-                showStatus('Please select a formulation.', true);
+                resultCard.classList.remove('show');
                 return;
             }
             const form = state.selectedFormulation;
 
-            let concVal = parseFloat(concInput.value);
-            if (isNaN(concVal) || concVal <= 0) {
-                showStatus('Enter a valid concentration.', true);
+            const concData = drug.concMap[form];
+            if (!concData) {
+                resultCard.classList.remove('show');
                 return;
             }
-            let concUnit = state.concUnit;
-            const activeUnitBtn = unitToggle.querySelector('button.active');
-            if (activeUnitBtn) concUnit = activeUnitBtn.dataset.unit;
-            state.concValue = concVal;
-            state.concUnit = concUnit;
+
+            let concMgPerMl = 0;
+            let isTablet = false;
+            if (concData.type === 'liquid') {
+                const mgInput = document.getElementById('concLiquidMg');
+                const mlInput = document.getElementById('concLiquidMl');
+                if (mgInput && mlInput) {
+                    const mg = parseFloat(mgInput.value);
+                    const ml = parseFloat(mlInput.value);
+                    if (isNaN(mg) || mg <= 0 || isNaN(ml) || ml <= 0) {
+                        resultCard.classList.remove('show');
+                        return;
+                    }
+                    concMgPerMl = mg / ml;
+                } else {
+                    concMgPerMl = state.concMgPerMl;
+                }
+            } else if (concData.type === 'percent') {
+                const inp = document.getElementById('concPercent');
+                let val = state.concPercent;
+                if (inp) {
+                    const parsed = parseFloat(inp.value);
+                    if (!isNaN(parsed) && parsed > 0) val = parsed;
+                }
+                concMgPerMl = val * 10;
+            } else if (concData.type === 'tablet') {
+                const inp = document.getElementById('concTabletMg');
+                let val = state.concTabletMg;
+                if (inp) {
+                    const parsed = parseFloat(inp.value);
+                    if (!isNaN(parsed) && parsed > 0) val = parsed;
+                }
+                concMgPerMl = val;
+                isTablet = true;
+            }
+
+            if (concMgPerMl <= 0) {
+                resultCard.classList.remove('show');
+                return;
+            }
 
             const doseRate = drug.dosage?.[animalId];
             if (doseRate === undefined || doseRate === null) {
-                const animalName = ANIMALS.find(a => a.id === animalId)?.name || animalId;
-                showStatus(`⚠️ No dosage data for ${animalName} with ${drug.name}.`, true);
+                resultCard.classList.remove('show');
                 return;
             }
 
             const totalMg = weight * doseRate;
 
-            let concMgPerMl;
-            if (concUnit === 'percent') {
-                concMgPerMl = concVal * 10;
-            } else {
-                concMgPerMl = concVal;
-            }
-
-            if (concMgPerMl <= 0) {
-                showStatus('Concentration must be > 0.', true);
-                return;
-            }
-
-            let doseMl = totalMg / concMgPerMl;
-
+            let finalDose;
             let resultUnitStr = 'mL';
-            let displayDose = doseMl;
-
-            if (form === 'Tablet') {
-                const tabletStrength = concMgPerMl;
-                let tablets = totalMg / tabletStrength;
-                displayDose = Math.round(tablets * 2) / 2;
-                resultUnitStr = displayDose === 1 ? 'tablet' : 'tablets';
+            if (isTablet) {
+                finalDose = totalMg / concMgPerMl;
+                finalDose = Math.round(finalDose * 2) / 2;
+                resultUnitStr = finalDose === 1 ? 'tablet' : 'tablets';
             } else {
-                displayDose = Math.round(doseMl * 100) / 100;
+                finalDose = totalMg / concMgPerMl;
+                finalDose = Math.round(finalDose * 100) / 100;
                 resultUnitStr = 'mL';
             }
 
             const animalName = ANIMALS.find(a => a.id === animalId)?.name || animalId;
             const animalEmoji = ANIMALS.find(a => a.id === animalId)?.emoji || '🐾';
-            const finalDoseStr = `${displayDose} ${resultUnitStr}`;
+            const finalDoseStr = `${finalDose} ${resultUnitStr}`;
 
-            // -- UPDATE UI --
-            resultValue.textContent = displayDose;
+            resultValue.textContent = finalDose;
             resultUnit.textContent = resultUnitStr;
 
             const doseRateDisplay = doseRate % 1 === 0 ? doseRate : doseRate.toFixed(2);
             rdDoseRate.textContent = `${doseRateDisplay} mg/kg (${animalName})`;
             rdStep1.textContent = `${weight} kg × ${doseRateDisplay} mg/kg = ${totalMg.toFixed(2)} mg`;
 
-            let concDisplay = `${concVal}`;
-            if (concUnit === 'percent') concDisplay += '%';
-            else concDisplay += ' mg/mL';
-            rdStep2.textContent = `${totalMg.toFixed(2)} mg ÷ ${concMgPerMl.toFixed(2)} mg/mL = ${doseMl.toFixed(2)} mL`;
+            let concDisplay = '';
+            if (concData.type === 'liquid') {
+                const mg = document.getElementById('concLiquidMg')?.value || state.concLiquidMg;
+                const ml = document.getElementById('concLiquidMl')?.value || state.concLiquidMl;
+                concDisplay = `${mg} mg / ${ml} ml (${concMgPerMl.toFixed(2)} mg/ml)`;
+            } else if (concData.type === 'percent') {
+                const val = document.getElementById('concPercent')?.value || state.concPercent;
+                concDisplay = `${val} % (${concMgPerMl.toFixed(2)} mg/ml)`;
+            } else if (concData.type === 'tablet') {
+                const val = document.getElementById('concTabletMg')?.value || state.concTabletMg;
+                concDisplay = `${val} mg/tablet`;
+            }
+            rdStep2.textContent = `${totalMg.toFixed(2)} mg ÷ ${isTablet ? '' : concMgPerMl.toFixed(2) + ' mg/ml'} = ${finalDose} ${resultUnitStr}`;
             rdFinal.textContent = finalDoseStr;
 
             resultCard.classList.add('show');
             statusMsg.classList.remove('show');
 
-            // -- SAVE TO HISTORY --
+            // Only save to history when the user clicks the button, not on every live update
+            // We'll keep the button for explicit history saves
+        }
+
+        // ============================================================
+        //  BUTTON CALCULATE (with history save)
+        // ============================================================
+        function calculateWithHistory() {
+            // First run the calculation to update UI
+            performCalculation();
+
+            // Then save to history if we have a valid result
+            const animalId = state.selectedAnimal;
+            const weight = parseFloat(weightInput.value);
+            if (!weight || weight <= 0) return;
+            if (!state.selectedDrug) return;
+            if (!state.selectedFormulation) return;
+
+            const drug = state.selectedDrug;
+            const form = state.selectedFormulation;
+            const concData = drug.concMap[form];
+            if (!concData) return;
+
+            const animalName = ANIMALS.find(a => a.id === animalId)?.name || animalId;
+            const animalEmoji = ANIMALS.find(a => a.id === animalId)?.emoji || '🐾';
+            const finalDose = resultValue.textContent;
+            const finalDoseStr = `${finalDose} ${resultUnit.textContent}`;
+
+            let concDisplay = '';
+            if (concData.type === 'liquid') {
+                const mg = document.getElementById('concLiquidMg')?.value || state.concLiquidMg;
+                const ml = document.getElementById('concLiquidMl')?.value || state.concLiquidMl;
+                concDisplay = `${mg} mg / ${ml} ml (${state.concMgPerMl.toFixed(2)} mg/ml)`;
+            } else if (concData.type === 'percent') {
+                const val = document.getElementById('concPercent')?.value || state.concPercent;
+                concDisplay = `${val} % (${state.concMgPerMl.toFixed(2)} mg/ml)`;
+            } else if (concData.type === 'tablet') {
+                const val = document.getElementById('concTabletMg')?.value || state.concTabletMg;
+                concDisplay = `${val} mg/tablet`;
+            }
+
+            const doseRate = drug.dosage?.[animalId];
+            const doseRateDisplay = doseRate % 1 === 0 ? doseRate : doseRate.toFixed(2);
+
             const historyEntry = {
                 animal: animalName,
                 animalEmoji: animalEmoji,
@@ -1877,22 +2291,8 @@
         }
 
         // ============================================================
-        //  SETTINGS UI
+        //  TAB SWITCHING
         // ============================================================
-        function toggleSettings(open) {
-            if (open === undefined) {
-                settingsOverlay.classList.toggle('open');
-            } else if (open) {
-                settingsOverlay.classList.add('open');
-            } else {
-                settingsOverlay.classList.remove('open');
-            }
-            if (settingsOverlay.classList.contains('open')) {
-                renderHistory();
-                renderDrugList();
-            }
-        }
-
         function switchTab(tabId) {
             tabBtns.forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.tab === tabId);
@@ -1902,11 +2302,19 @@
             if (pane) pane.classList.add('active');
         }
 
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchTab(btn.dataset.tab);
+            });
+        });
+
         // ============================================================
         //  EVENT BINDINGS
         // ============================================================
-        weightInput.addEventListener('input', clearResult);
+        // Weight: live calculation with debounce
+        weightInput.addEventListener('input', calculateLive);
 
+        // Drug search: just show dropdown, selection triggers live calc via click
         drugSearchInput.addEventListener('input', (e) => {
             const val = e.target.value;
             if (val.length > 0) {
@@ -1914,7 +2322,7 @@
             } else {
                 drugDropdown.classList.remove('open');
             }
-            clearResult();
+            // Don't clear result, just keep it as is
         });
 
         drugSearchInput.addEventListener('blur', () => {
@@ -1926,55 +2334,18 @@
             }
         });
 
-        unitToggle.addEventListener('click', (e) => {
-            const btn = e.target.closest('button');
-            if (!btn) return;
-            if (state.isConcLocked) {
-                showStatus('Concentration is locked by brand selection.', false);
-                return;
-            }
-            unitToggle.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            state.concUnit = btn.dataset.unit;
-            clearResult();
-        });
+        // Calculate button: does the calculation AND saves to history
+        calcBtn.addEventListener('click', calculateWithHistory);
 
-        concInput.addEventListener('input', () => {
-            if (state.isConcLocked) return;
-            state.concValue = parseFloat(concInput.value) || 0;
-            clearResult();
-        });
-
-        calcBtn.addEventListener('click', calculate);
-
+        // Enter key: trigger calculation with history
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 if (document.activeElement === weightInput || document.activeElement === drugSearchInput) {
                     e.preventDefault();
-                    calculate();
+                    calculateWithHistory();
                 }
             }
         });
-
-        // Settings
-        settingsToggleBtn.addEventListener('click', () => toggleSettings(true));
-        settingsCloseBtn.addEventListener('click', () => toggleSettings(false));
-        settingsOverlay.addEventListener('click', (e) => {
-            if (e.target === settingsOverlay) toggleSettings(false);
-        });
-
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                switchTab(btn.dataset.tab);
-            });
-        });
-
-        clearHistoryBtn.addEventListener('click', clearHistory);
-
-        // Drug list
-        addDrugBtn.addEventListener('click', openAddForm);
-        cancelDrugBtn.addEventListener('click', resetAddForm);
-        saveDrugBtn.addEventListener('click', validateAndSaveDrug);
 
         // ============================================================
         //  INIT
@@ -1983,25 +2354,23 @@
             loadHistory();
             renderAnimals();
 
-            // If we have drugs, select the first one
             if (allDrugs.length > 0) {
                 const defaultDrug = allDrugs[0];
                 state.selectedDrug = defaultDrug;
                 drugSearchInput.value = defaultDrug.name;
                 state.selectedFormulation = defaultDrug.formulations[0];
                 if (defaultDrug.concMap && defaultDrug.concMap[state.selectedFormulation]) {
-                    const c = defaultDrug.concMap[state.selectedFormulation];
-                    state.concValue = c.value;
-                    state.concUnit = c.unit;
+                    applyConcData(defaultDrug.concMap[state.selectedFormulation]);
                 }
                 renderFormulations();
-                updateConcUI();
+                renderConcentrationUI();
             }
 
             weightInput.value = 5;
             state.weight = 5;
 
-            setTimeout(() => calculate(), 300);
+            // Initial calculation (after a tiny delay so DOM is ready)
+            setTimeout(() => performCalculation(), 100);
         }
 
         init();
