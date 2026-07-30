@@ -30,14 +30,14 @@
             box-shadow: 0 20px 60px rgba(4, 120, 87, 0.12), 0 8px 24px rgba(0, 0, 0, 0.04);
             padding: 28px 22px 34px;
             border: 1px solid #e6f7ec;
+            position: relative;
         }
 
-        /* ---- HEADER ---- */
         .app-header {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 28px;
+            margin-bottom: 20px;
             padding-bottom: 12px;
             border-bottom: 2px solid #dcfce7;
         }
@@ -72,6 +72,33 @@
             padding: 4px 14px;
             border-radius: 40px;
             border: 1px solid #86efac;
+            margin-right: 8px;
+        }
+
+        .settings-btn {
+            background: #f1f5f9;
+            border: 2px solid #e2efe8;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: #334155;
+            flex-shrink: 0;
+        }
+
+        .settings-btn:hover {
+            background: #dcfce7;
+            border-color: #059669;
+            transform: rotate(60deg);
+        }
+
+        .settings-btn:active {
+            transform: scale(0.9);
         }
 
         .section-label {
@@ -97,7 +124,6 @@
             justify-content: center;
         }
 
-        /* ---- ANIMAL GRID (using HTML emojis) ---- */
         .animal-grid {
             display: flex;
             gap: 8px;
@@ -120,38 +146,60 @@
             background: #fafffe;
             border: 2px solid #e2efe8;
             border-radius: 60px;
-            padding: 8px 18px 8px 14px;
-            gap: 4px;
+            padding: 6px 12px 6px 12px;
+            gap: 2px;
             cursor: pointer;
             transition: all 0.15s ease;
-            min-width: 74px;
+            min-width: 62px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-        }
-
-        .animal-card .emoji {
-            font-size: 28px;
-            line-height: 1;
-        }
-
-        .animal-card .name {
-            font-size: 13px;
-            font-weight: 600;
-            color: #334155;
-            letter-spacing: -0.2px;
         }
 
         .animal-card.active {
             border-color: #059669;
             background: #ecfdf5;
             box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.12);
-            transform: scale(1.02);
+            transform: scale(1.03);
         }
 
         .animal-card.active .name {
             color: #065f46;
+            font-weight: 700;
         }
 
-        /* ---- WEIGHT ---- */
+        .animal-emoji-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #dcfce7;
+            border-radius: 50%;
+            border: 2px solid #86efac;
+            font-size: 20px;
+            line-height: 1;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.08);
+        }
+
+        .animal-card.active .animal-emoji-wrap {
+            background: #065f46;
+            border-color: #065f46;
+            box-shadow: 0 4px 12px rgba(6, 95, 70, 0.25);
+        }
+
+        .animal-card.active .animal-emoji-wrap .emoji {
+            filter: brightness(0) invert(1);
+        }
+
+        .animal-card .name {
+            font-size: 11px;
+            font-weight: 600;
+            color: #334155;
+            letter-spacing: -0.1px;
+            margin-top: 1px;
+            white-space: nowrap;
+        }
+
         .weight-input-wrap {
             display: flex;
             align-items: center;
@@ -196,7 +244,6 @@
             border-radius: 40px;
         }
 
-        /* ---- DRUG SEARCH ---- */
         .search-wrap {
             position: relative;
             margin-bottom: 8px;
@@ -278,7 +325,6 @@
             border-radius: 40px;
         }
 
-        /* ---- FORMULATION CHIPS ---- */
         .chips-wrap {
             display: flex;
             flex-wrap: wrap;
@@ -313,7 +359,6 @@
             transform: scale(0.96);
         }
 
-        /* ---- CONCENTRATION ---- */
         .conc-row {
             display: flex;
             align-items: center;
@@ -383,7 +428,6 @@
             margin-left: 4px;
         }
 
-        /* ---- CALCULATE BTN ---- */
         .calc-btn {
             width: 100%;
             padding: 18px;
@@ -411,7 +455,6 @@
             transform: scale(0.98);
         }
 
-        /* ---- RESULT CARD ---- */
         .result-card {
             background: #fafffe;
             border: 2px solid #86efac;
@@ -534,18 +577,510 @@
             margin-top: 4px;
             border: 1px solid #e2e8f0;
         }
+
+        /* ===== SETTINGS OVERLAY ===== */
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+            padding: 20px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .settings-overlay.open {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .settings-panel {
+            background: #ffffff;
+            border-radius: 40px 40px 0 0;
+            max-width: 480px;
+            width: 100%;
+            max-height: 85vh;
+            padding: 28px 22px 34px;
+            box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e6f7ec;
+            border-bottom: none;
+        }
+
+        @keyframes slideUp {
+            0% {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .settings-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #dcfce7;
+            margin-bottom: 20px;
+        }
+
+        .settings-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #065f46;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-close-btn {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #475569;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e2efe8;
+        }
+
+        .settings-close-btn:hover {
+            background: #dcfce7;
+            border-color: #059669;
+            color: #065f46;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 60px;
+            margin-bottom: 20px;
+            border: 1px solid #e2efe8;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: transparent;
+            color: #64748b;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .tab-btn.active {
+            background: #065f46;
+            color: white;
+            box-shadow: 0 4px 12px rgba(6, 95, 70, 0.2);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #dcfce7;
+            color: #065f46;
+        }
+
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .tab-content .tab-pane {
+            display: none;
+            animation: fadeUp 0.2s ease;
+        }
+
+        .tab-content .tab-pane.active {
+            display: block;
+        }
+
+        /* ---- HISTORY ---- */
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-bottom: 12px;
+        }
+
+        .history-item {
+            background: #fafffe;
+            border: 1px solid #dcfce7;
+            border-radius: 20px;
+            padding: 14px 18px;
+            transition: all 0.15s;
+            border-left: 5px solid #86efac;
+        }
+
+        .history-item:hover {
+            border-color: #86efac;
+            background: #f0fdf4;
+        }
+
+        .history-item .h-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .history-item .h-title {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 16px;
+        }
+
+        .history-item .h-title .h-animal {
+            background: #dcfce7;
+            padding: 0 10px;
+            border-radius: 40px;
+            font-size: 13px;
+            color: #065f46;
+            margin-right: 6px;
+        }
+
+        .history-item .h-dose {
+            font-weight: 800;
+            color: #065f46;
+            font-size: 18px;
+            white-space: nowrap;
+            background: #ecfdf5;
+            padding: 2px 14px;
+            border-radius: 40px;
+            border: 1px solid #86efac;
+        }
+
+        .history-item .h-details {
+            font-size: 14px;
+            color: #475569;
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+
+        .history-item .h-details span {
+            background: #f8fafc;
+            padding: 2px 12px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            font-size: 13px;
+        }
+
+        .history-item .h-time {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        .history-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+        }
+
+        .history-empty .big-emoji {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 12px;
+        }
+        .history-empty p {
+            font-weight: 500;
+        }
+
+        .clear-history-btn {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: 'Inter', sans-serif;
+            margin-top: 8px;
+            width: fit-content;
+            align-self: center;
+        }
+
+        .clear-history-btn:hover {
+            background: #fee2e2;
+            border-color: #f87171;
+        }
+        .clear-history-btn:active {
+            transform: scale(0.96);
+        }
+
+        .history-stats {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* ---- DRUG LIST ---- */
+        .drug-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .drug-list-header h3 {
+            font-size: 16px;
+            color: #0f172a;
+        }
+
+        .add-drug-btn {
+            background: #065f46;
+            border: none;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.15s;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #065f46;
+        }
+
+        .add-drug-btn:hover {
+            background: #047857;
+            transform: scale(1.02);
+        }
+
+        .drug-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-bottom: 12px;
+        }
+
+        .drug-card {
+            background: #fafffe;
+            border: 1px solid #dcfce7;
+            border-radius: 20px;
+            padding: 14px 16px;
+            border-left: 5px solid #86efac;
+        }
+
+        .drug-card .d-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: #0f172a;
+        }
+        .drug-card .d-brands {
+            font-size: 13px;
+            color: #475569;
+            margin: 4px 0;
+        }
+        .drug-card .d-formulations {
+            font-size: 13px;
+            color: #475569;
+        }
+        .drug-card .d-doses {
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 12px;
+            font-size: 12px;
+            background: #f8fafc;
+            padding: 6px 12px;
+            border-radius: 40px;
+        }
+        .drug-card .d-doses span {
+            background: white;
+            padding: 0 8px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .no-drugs-msg {
+            text-align: center;
+            padding: 30px 20px;
+            color: #94a3b8;
+        }
+
+        /* ---- ADD DRUG FORM (inline) ---- */
+        .add-drug-form {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 20px;
+            margin-top: 12px;
+            border: 2px solid #dcfce7;
+            display: none;
+            animation: fadeUp 0.25s ease;
+        }
+
+        .add-drug-form.open {
+            display: block;
+        }
+
+        .add-drug-form .form-row {
+            margin-bottom: 14px;
+        }
+
+        .add-drug-form label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1e293b;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .add-drug-form input,
+        .add-drug-form textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e2efe8;
+            border-radius: 40px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            outline: none;
+            transition: 0.15s;
+        }
+
+        .add-drug-form input:focus,
+        .add-drug-form textarea:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.08);
+        }
+
+        .add-drug-form textarea {
+            border-radius: 20px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .add-drug-form .species-doses-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 16px;
+        }
+
+        .add-drug-form .species-doses-grid .species-input {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .add-drug-form .species-doses-grid .species-input label {
+            font-weight: 500;
+            font-size: 13px;
+            color: #334155;
+            min-width: 40px;
+        }
+
+        .add-drug-form .species-doses-grid .species-input input {
+            width: 80px;
+            padding: 6px 10px;
+            font-size: 14px;
+        }
+
+        .add-drug-form .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .add-drug-form .form-actions button {
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            transition: 0.15s;
+        }
+
+        .add-drug-form .form-actions .save-btn {
+            background: #065f46;
+            color: white;
+        }
+        .add-drug-form .form-actions .save-btn:hover {
+            background: #047857;
+        }
+        .add-drug-form .form-actions .cancel-btn {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        .add-drug-form .form-actions .cancel-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .form-error {
+            color: #b91c1c;
+            font-size: 13px;
+            margin-top: 6px;
+            display: none;
+        }
+        .form-error.show {
+            display: block;
+        }
+
+        .tab-content::-webkit-scrollbar {
+            width: 4px;
+        }
+        .tab-content::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+        .tab-content::-webkit-scrollbar-thumb {
+            background: #86efac;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
 
     <div class="phone-frame" id="app">
-        <!-- Header -->
+        <!-- HEADER -->
         <div class="app-header">
             <h1>🩺 Quick Dose <span>MVP</span></h1>
-            <div class="header-badge">🐾 Vet</div>
+            <div class="header-badge">🐾 8 Species</div>
+            <button class="settings-btn" id="settingsToggleBtn" aria-label="Settings">⚙️</button>
         </div>
 
-        <!-- 1. ANIMAL (using HTML emojis) -->
+        <!-- 1. ANIMAL -->
         <div class="section-label"><span class="step">1</span> Select Animal</div>
         <div class="animal-grid" id="animalGrid"></div>
 
@@ -578,9 +1113,8 @@
             <span class="conc-lock-badge" id="lockBadge" style="display: none;">🔒 Auto</span>
         </div>
 
-        <!-- Formula reference -->
         <div class="formula-badge">
-            ⚡ <strong>Formula:</strong> (Weight × Dose Rate) ÷ Concentration
+            ⚡ <strong>Formula:</strong> (Weight × Species Dose Rate) ÷ Concentration
         </div>
 
         <!-- CALCULATE -->
@@ -596,6 +1130,7 @@
                 <span class="unit" id="resultUnit">ml</span>
             </div>
             <div class="result-breakdown" id="resultBreakdown">
+                <div class="line"><span class="label">🐾 Species Dose Rate</span><span class="value" id="rdDoseRate">—</span></div>
                 <div class="line"><span class="label">📐 Step 1: Weight × Dose Rate</span><span class="value" id="rdStep1">—</span></div>
                 <div class="line"><span class="label">🧪 Step 2: Total mg ÷ Concentration</span><span class="value" id="rdStep2">—</span></div>
                 <div class="line" style="border-top: 1px solid #dcfce7; padding-top: 6px; margin-top: 4px;">
@@ -610,32 +1145,118 @@
         </div>
     </div>
 
+    <!-- ============================================================
+    SETTINGS OVERLAY
+    ============================================================ -->
+    <div class="settings-overlay" id="settingsOverlay">
+        <div class="settings-panel">
+            <div class="settings-header">
+                <h2>⚙️ Settings</h2>
+                <button class="settings-close-btn" id="settingsCloseBtn">✕</button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="history">📋 History</button>
+                <button class="tab-btn" data-tab="druglist">💊 Drug List</button>
+                <button class="tab-btn" data-tab="about">ℹ️ About</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- HISTORY -->
+                <div class="tab-pane active" id="tab-history">
+                    <div class="history-stats">
+                        <span id="historyCount">0 entries</span>
+                        <button class="clear-history-btn" id="clearHistoryBtn">🗑️ Clear All</button>
+                    </div>
+                    <div class="history-list" id="historyList"></div>
+                </div>
+
+                <!-- DRUG LIST -->
+                <div class="tab-pane" id="tab-druglist">
+                    <div class="drug-list-header">
+                        <h3>💊 All Drugs</h3>
+                        <button class="add-drug-btn" id="addDrugBtn">➕ Add New</button>
+                    </div>
+                    <!-- Inline add form -->
+                    <div class="add-drug-form" id="addDrugForm">
+                        <div class="form-row">
+                            <label>Drug Name *</label>
+                            <input type="text" id="newDrugName" placeholder="e.g., Amoxicillin" />
+                        </div>
+                        <div class="form-row">
+                            <label>Brands (comma-separated)</label>
+                            <input type="text" id="newDrugBrands" placeholder="Amoxiclav, Augmentin, Clamoxyl" />
+                        </div>
+                        <div class="form-row">
+                            <label>Formulations (comma-separated)</label>
+                            <input type="text" id="newDrugFormulations" placeholder="Injection, Tablet, Syrup" />
+                        </div>
+                        <div class="form-row">
+                            <label>Concentrations (one per line, format: Formulation:value unit)</label>
+                            <textarea id="newDrugConcs" rows="3" placeholder="Injection:150 mg/ml&#10;Tablet:500 mg/ml&#10;Syrup:50 mg/ml"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <label>Dose Rates (mg/kg) for each species</label>
+                            <div class="species-doses-grid" id="speciesDosesContainer">
+                                <!-- rendered by JS -->
+                            </div>
+                        </div>
+                        <div class="form-error" id="formError"></div>
+                        <div class="form-actions">
+                            <button class="save-btn" id="saveDrugBtn">💾 Save Drug</button>
+                            <button class="cancel-btn" id="cancelDrugBtn">Cancel</button>
+                        </div>
+                    </div>
+
+                    <!-- Drug list display -->
+                    <div class="drug-grid" id="drugListContainer">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- ABOUT -->
+                <div class="tab-pane" id="tab-about">
+                    <div style="padding: 20px 0; color: #475569; line-height: 1.6;">
+                        <p style="font-size: 18px; font-weight: 600; color: #065f46;">🐾 Quick Dose v1.0</p>
+                        <p style="margin-top: 8px;">Veterinary dosage calculator for 8 species.</p>
+                        <p style="margin-top: 4px; font-size: 14px;">Always double-check with a licensed veterinarian.</p>
+                        <hr style="margin: 20px 0; border: 1px solid #dcfce7;" />
+                        <p style="font-size: 13px; color: #94a3b8;">Built with ❤️ for vets &amp; farmers.</p>
+                        <p style="font-size: 13px; color: #94a3b8; margin-top: 6px;">Custom drugs saved in your browser.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ============================================================
-        //  ANIMALS (HTML emojis per your request)
+        //  SPECIES
         // ============================================================
         const ANIMALS = [
             { id: 'dog', name: 'Dog', emoji: '🐶' },
             { id: 'cat', name: 'Cat', emoji: '🐱' },
             { id: 'horse', name: 'Horse', emoji: '🐴' },
             { id: 'cow', name: 'Cow', emoji: '🐮' },
-            { id: 'goat', name: 'Goat', emoji: '🐑' },
+            { id: 'buffalo', name: 'Buffalo', emoji: '🐃' },
+            { id: 'sheep', name: 'Sheep', emoji: '🐑' },
+            { id: 'goat', name: 'Goat', emoji: '🐐' },
             { id: 'bird', name: 'Bird', emoji: '🐓' },
         ];
 
         // ============================================================
-        //  DRUGS WITH CORRECT VET DATA
-        //  Formula: (Weight × Dose Rate) ÷ Concentration
-        //  Meloxicam: 1 mg/kg for dogs, 20mg/5ml = 4 mg/ml
+        //  DEFAULT DRUGS
         // ============================================================
-        const DRUGS = [{
+        const DEFAULT_DRUGS = [{
             id: 'meloxicam',
             name: 'Meloxicam',
             brands: ['Metacam', 'Mobic'],
             formulations: ['Injection', 'Tablet'],
-            // 20mg per 5ml = 4 mg/ml
             concMap: { 'Injection': { value: 4, unit: 'mgml' }, 'Tablet': { value: 15, unit: 'mgml' } },
-            dosage: { dog: 1, cat: 0.1, horse: 0.6, cow: 0.5, goat: 0.5, bird: 0.2 }
+            dosage: { dog: 1.0, cat: 0.1, horse: 0.6, cow: 0.5, buffalo: 0.4, sheep: 0.5, goat: 0.5, bird: 0.2 },
+            brandLock: {}
         }, {
             id: 'amoxicillin',
             name: 'Amoxicillin',
@@ -643,16 +1264,15 @@
             formulations: ['Injection', 'Tablet', 'Syrup'],
             concMap: { 'Injection': { value: 150, unit: 'mgml' }, 'Tablet': { value: 500, unit: 'mgml' },
                 'Syrup': { value: 50, unit: 'mgml' } },
-            dosage: { dog: 10, cat: 10, horse: 10, cow: 10, goat: 10, bird: 15 }
+            dosage: { dog: 10, cat: 10, horse: 10, cow: 10, buffalo: 10, sheep: 10, goat: 10, bird: 15 },
+            brandLock: {}
         }, {
             id: 'ivermectin',
             name: 'Ivermectin',
             brands: ['IvoteK', 'Ivomec', 'Noromectin'],
             formulations: ['Injection', 'Oral'],
-            // 1% = 10 mg/ml
             concMap: { 'Injection': { value: 1, unit: 'percent' }, 'Oral': { value: 1, unit: 'percent' } },
-            dosage: { dog: 0.2, cat: 0.2, horse: 0.2, cow: 0.2, goat: 0.2, bird: 0.2 },
-            // Brand lock: if user types "IvoteK", concentration locks to 1%
+            dosage: { dog: 0.2, cat: 0.2, horse: 0.2, cow: 0.2, buffalo: 0.2, sheep: 0.15, goat: 0.2, bird: 0.2 },
             brandLock: { 'IvoteK': { value: 1, unit: 'percent' } }
         }, {
             id: 'enrofloxacin',
@@ -660,19 +1280,54 @@
             brands: ['Baytril', 'Enrocure'],
             formulations: ['Injection', 'Tablet'],
             concMap: { 'Injection': { value: 100, unit: 'mgml' }, 'Tablet': { value: 50, unit: 'mgml' } },
-            dosage: { dog: 5, cat: 5, horse: 5, cow: 5, goat: 5, bird: 10 }
+            dosage: { dog: 5, cat: 5, horse: 5, cow: 5, buffalo: 4.5, sheep: 5, goat: 5, bird: 10 },
+            brandLock: {}
         }, {
             id: 'dexamethasone',
             name: 'Dexamethasone',
             brands: ['Azium', 'Dexone'],
             formulations: ['Injection', 'Tablet'],
             concMap: { 'Injection': { value: 2, unit: 'mgml' }, 'Tablet': { value: 0.5, unit: 'mgml' } },
-            dosage: { dog: 0.1, cat: 0.1, horse: 0.05, cow: 0.05, goat: 0.05, bird: 0.2 }
+            dosage: { dog: 0.1, cat: 0.1, horse: 0.05, cow: 0.05, buffalo: 0.04, sheep: 0.05, goat: 0.05, bird: 0.2 },
+            brandLock: {}
         }];
+
+        // ============================================================
+        //  DRUGS MANAGEMENT (localStorage)
+        // ============================================================
+        const STORAGE_KEY_DRUGS = 'quickDoseDrugs';
+
+        function getDrugs() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY_DRUGS);
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    // merge with defaults to ensure all default drugs are present
+                    // but we want to keep user-added ones, and possibly override defaults? We'll keep defaults + user-added.
+                    // We'll combine: start with defaults, then add any custom drugs not already in defaults (by id).
+                    // But we need to handle that user might have modified a default? We'll treat user-added as separate.
+                    // For simplicity, we'll store the entire list, including defaults, and on load we use that.
+                    // If no stored, we initialize with defaults.
+                    return parsed;
+                }
+            } catch (e) {}
+            // init with defaults
+            localStorage.setItem(STORAGE_KEY_DRUGS, JSON.stringify(DEFAULT_DRUGS));
+            return DEFAULT_DRUGS;
+        }
+
+        function saveDrugs(drugs) {
+            localStorage.setItem(STORAGE_KEY_DRUGS, JSON.stringify(drugs));
+        }
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        }
 
         // ============================================================
         //  STATE
         // ============================================================
+        let allDrugs = getDrugs();
         let state = {
             selectedAnimal: 'dog',
             weight: 5,
@@ -682,6 +1337,8 @@
             concUnit: 'mgml',
             isConcLocked: false,
         };
+
+        let historyEntries = [];
 
         // ============================================================
         //  DOM REFS
@@ -702,10 +1359,231 @@
         const resultCard = $('#resultCard');
         const resultValue = $('#resultValue');
         const resultUnit = $('#resultUnit');
+        const rdDoseRate = $('#rdDoseRate');
         const rdStep1 = $('#rdStep1');
         const rdStep2 = $('#rdStep2');
         const rdFinal = $('#rdFinal');
         const statusMsg = $('#statusMsg');
+
+        // Settings
+        const settingsOverlay = $('#settingsOverlay');
+        const settingsToggleBtn = $('#settingsToggleBtn');
+        const settingsCloseBtn = $('#settingsCloseBtn');
+        const historyList = $('#historyList');
+        const historyCount = $('#historyCount');
+        const clearHistoryBtn = $('#clearHistoryBtn');
+        const tabBtns = $$('.tab-btn');
+        const drugListContainer = $('#drugListContainer');
+        const addDrugBtn = $('#addDrugBtn');
+        const addDrugForm = $('#addDrugForm');
+        const newDrugName = $('#newDrugName');
+        const newDrugBrands = $('#newDrugBrands');
+        const newDrugFormulations = $('#newDrugFormulations');
+        const newDrugConcs = $('#newDrugConcs');
+        const speciesDosesContainer = $('#speciesDosesContainer');
+        const saveDrugBtn = $('#saveDrugBtn');
+        const cancelDrugBtn = $('#cancelDrugBtn');
+        const formError = $('#formError');
+
+        // ============================================================
+        //  HISTORY
+        // ============================================================
+        function loadHistory() {
+            try {
+                const stored = localStorage.getItem('quickDoseHistory');
+                if (stored) historyEntries = JSON.parse(stored);
+                else historyEntries = [];
+            } catch (e) { historyEntries = []; }
+        }
+
+        function saveHistoryToStorage() {
+            try {
+                localStorage.setItem('quickDoseHistory', JSON.stringify(historyEntries));
+            } catch (e) {}
+            renderHistory();
+        }
+
+        function addHistoryEntry(entry) {
+            historyEntries.unshift(entry);
+            if (historyEntries.length > 200) historyEntries.pop();
+            saveHistoryToStorage();
+        }
+
+        function clearHistory() {
+            if (confirm('Delete all history entries?')) {
+                historyEntries = [];
+                saveHistoryToStorage();
+            }
+        }
+
+        function renderHistory() {
+            if (!historyList) return;
+            if (historyEntries.length === 0) {
+                historyList.innerHTML = `
+                        <div class="history-empty">
+                            <span class="big-emoji">📭</span>
+                            <p>No calculations saved yet.</p>
+                            <p style="font-size:13px; margin-top:4px;">Hit "Calculate Dose" and it will appear here.</p>
+                        </div>
+                    `;
+                historyCount.textContent = '0 entries';
+                return;
+            }
+            historyCount.textContent = `${historyEntries.length} entries`;
+            historyList.innerHTML = historyEntries.map(entry => `
+                    <div class="history-item">
+                        <div class="h-top">
+                            <div class="h-title">
+                                <span class="h-animal">${entry.animalEmoji || '🐾'} ${entry.animal}</span>
+                                ${entry.drug} · ${entry.formulation}
+                            </div>
+                            <div class="h-dose">${entry.dose}</div>
+                        </div>
+                        <div class="h-details">
+                            <span>⚖️ ${entry.weight} kg</span>
+                            <span>🧪 ${entry.concentration}</span>
+                            <span>📐 ${entry.doseRate}</span>
+                        </div>
+                        <div class="h-time">🕐 ${entry.timestamp}</div>
+                    </div>
+                `).join('');
+        }
+
+        // ============================================================
+        //  DRUG LIST UI
+        // ============================================================
+        function renderDrugList() {
+            const drugs = allDrugs;
+            if (!drugs || drugs.length === 0) {
+                drugListContainer.innerHTML = `<div class="no-drugs-msg">💊 No drugs added yet.</div>`;
+                return;
+            }
+            drugListContainer.innerHTML = drugs.map(d => `
+                    <div class="drug-card">
+                        <div class="d-name">${d.name}</div>
+                        <div class="d-brands">Brands: ${d.brands.join(', ')}</div>
+                        <div class="d-formulations">Formulations: ${d.formulations.join(', ')}</div>
+                        <div class="d-doses">
+                            ${Object.entries(d.dosage).map(([species, val]) =>
+                                `<span>${species}: ${val} mg/kg</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `).join('');
+        }
+
+        // ============================================================
+        //  ADD DRUG FORM
+        // ============================================================
+        function buildSpeciesDoseInputs() {
+            speciesDosesContainer.innerHTML = ANIMALS.map(a => `
+                    <div class="species-input">
+                        <label>${a.emoji} ${a.name}</label>
+                        <input type="number" step="any" min="0" id="dose_${a.id}" placeholder="mg/kg" />
+                    </div>
+                `).join('');
+        }
+
+        function resetAddForm() {
+            newDrugName.value = '';
+            newDrugBrands.value = '';
+            newDrugFormulations.value = '';
+            newDrugConcs.value = '';
+            document.querySelectorAll('#speciesDosesContainer input').forEach(inp => inp.value = '');
+            formError.classList.remove('show');
+            formError.textContent = '';
+            addDrugForm.classList.remove('open');
+        }
+
+        function openAddForm() {
+            addDrugForm.classList.add('open');
+            buildSpeciesDoseInputs();
+        }
+
+        function validateAndSaveDrug() {
+            const name = newDrugName.value.trim();
+            if (!name) {
+                showFormError('Drug name is required.');
+                return;
+            }
+            const brandsRaw = newDrugBrands.value.trim();
+            const brands = brandsRaw ? brandsRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+            const formulationsRaw = newDrugFormulations.value.trim();
+            const formulations = formulationsRaw ? formulationsRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+            if (formulations.length === 0) {
+                showFormError('At least one formulation is required.');
+                return;
+            }
+
+            // Parse concentrations
+            const concLines = newDrugConcs.value.trim().split('\n').filter(line => line.trim());
+            const concMap = {};
+            for (const line of concLines) {
+                const parts = line.split(':');
+                if (parts.length !== 2) {
+                    showFormError(`Invalid concentration line: "${line}". Use format "Formulation:value unit"`);
+                    return;
+                }
+                const form = parts[0].trim();
+                const rest = parts[1].trim();
+                const match = rest.match(/^(\d+\.?\d*)\s*(mg\/ml|percent|%)$/i);
+                if (!match) {
+                    showFormError(`Invalid concentration value: "${rest}". Use e.g., "4 mg/ml" or "1 %"`);
+                    return;
+                }
+                const value = parseFloat(match[1]);
+                let unit = match[2].toLowerCase();
+                if (unit === '%') unit = 'percent';
+                if (unit === 'mg/ml') unit = 'mgml';
+                concMap[form] = { value, unit };
+            }
+            // Check that all formulations have a concentration
+            for (const f of formulations) {
+                if (!concMap[f]) {
+                    showFormError(`Missing concentration for formulation "${f}".`);
+                    return;
+                }
+            }
+
+            // Get species doses
+            const dosage = {};
+            for (const a of ANIMALS) {
+                const inp = document.getElementById(`dose_${a.id}`);
+                const val = parseFloat(inp.value);
+                if (isNaN(val) || val < 0) {
+                    showFormError(`Invalid dose for ${a.name}. Must be a number >= 0.`);
+                    return;
+                }
+                dosage[a.id] = val;
+            }
+
+            // Build new drug object
+            const newDrug = {
+                id: generateId(),
+                name: name,
+                brands: brands,
+                formulations: formulations,
+                concMap: concMap,
+                dosage: dosage,
+                brandLock: {} // we don't support brandLock for custom drugs in this MVP
+            };
+
+            // Add to allDrugs
+            allDrugs.push(newDrug);
+            saveDrugs(allDrugs);
+            renderDrugList();
+            resetAddForm();
+            // Refresh the main dropdown & state (if selected drug is null, we might want to keep current selection)
+            // We'll just re-render dropdown when user searches, but also update the internal DRUGS used in calculator.
+            // Since allDrugs is used in search, it's fine.
+            // Also update the selected drug if needed? Not necessary.
+            alert(`✅ Drug "${name}" added successfully!`);
+        }
+
+        function showFormError(msg) {
+            formError.textContent = msg;
+            formError.classList.add('show');
+        }
 
         // ============================================================
         //  RENDER: ANIMALS
@@ -713,7 +1591,9 @@
         function renderAnimals() {
             animalGrid.innerHTML = ANIMALS.map(a => `
                     <div class="animal-card ${state.selectedAnimal === a.id ? 'active' : ''}" data-id="${a.id}">
-                        <span class="emoji">${a.emoji}</span>
+                        <div class="animal-emoji-wrap">
+                            <span class="emoji">${a.emoji}</span>
+                        </div>
                         <span class="name">${a.name}</span>
                     </div>
                 `).join('');
@@ -728,21 +1608,22 @@
         }
 
         // ============================================================
-        //  RENDER: DRUG DROPDOWN
+        //  DRUG DROPDOWN (uses allDrugs)
         // ============================================================
         function renderDrugDropdown(query = '') {
             const q = query.toLowerCase().trim();
-            let matches = DRUGS;
+            let matches = allDrugs;
 
             if (q) {
-                matches = DRUGS.filter(d => {
+                matches = allDrugs.filter(d => {
                     if (d.name.toLowerCase().includes(q)) return true;
                     return d.brands.some(b => b.toLowerCase().includes(q));
                 });
             }
 
             if (matches.length === 0) {
-                drugDropdown.innerHTML = `<div class="dropdown-item" style="justify-content:center; color:#94a3b8;">No drugs found</div>`;
+                drugDropdown.innerHTML =
+                    `<div class="dropdown-item" style="justify-content:center; color:#94a3b8;">No drugs found</div>`;
                 drugDropdown.classList.add('open');
                 return;
             }
@@ -757,7 +1638,7 @@
             drugDropdown.querySelectorAll('.dropdown-item').forEach(el => {
                 el.addEventListener('click', () => {
                     const drugId = el.dataset.id;
-                    const drug = DRUGS.find(d => d.id === drugId);
+                    const drug = allDrugs.find(d => d.id === drugId);
                     if (drug) selectDrug(drug);
                 });
             });
@@ -773,7 +1654,6 @@
             state.selectedFormulation = null;
             state.isConcLocked = false;
 
-            // Check brand lock (if user searched by brand)
             const inputVal = drugSearchInput.value.trim();
             const matchedBrand = drug.brands.find(b => b.toLowerCase() === inputVal.toLowerCase());
             if (matchedBrand && drug.brandLock && drug.brandLock[matchedBrand]) {
@@ -782,7 +1662,6 @@
                 state.concUnit = lock.unit;
                 state.isConcLocked = true;
             } else {
-                // Set default concentration from first formulation
                 const firstForm = drug.formulations[0];
                 if (drug.concMap && drug.concMap[firstForm]) {
                     state.concValue = drug.concMap[firstForm].value;
@@ -835,7 +1714,6 @@
                 });
             });
 
-            // Auto-select first if nothing selected
             if (!state.selectedFormulation && forms.length > 0) {
                 state.selectedFormulation = forms[0];
                 if (state.selectedDrug.concMap && state.selectedDrug.concMap[forms[0]]) {
@@ -872,18 +1750,13 @@
         }
 
         // ============================================================
-        //  CALCULATE — THE FINAL TEXTBOOK FORMULA
-        //  Volume (mL) = [ Weight (kg) × Dose Rate (mg/kg) ] ÷ Concentration (mg/mL)
-        //  For tablets: Tablets = [ Weight × Dose Rate ] ÷ Tablet Strength
+        //  CALCULATE
         // ============================================================
         function calculate() {
             statusMsg.classList.remove('show');
             resultCard.classList.remove('show');
 
-            // 1. Animal
             const animalId = state.selectedAnimal;
-
-            // 2. Weight
             const weight = parseFloat(weightInput.value);
             if (!weight || weight <= 0) {
                 showStatus('Please enter a valid weight.', true);
@@ -891,21 +1764,18 @@
             }
             state.weight = weight;
 
-            // 3. Drug
             if (!state.selectedDrug) {
                 showStatus('Please select a drug or brand.', true);
                 return;
             }
             const drug = state.selectedDrug;
 
-            // 4. Formulation
             if (!state.selectedFormulation) {
                 showStatus('Please select a formulation.', true);
                 return;
             }
             const form = state.selectedFormulation;
 
-            // 5. Concentration
             let concVal = parseFloat(concInput.value);
             if (isNaN(concVal) || concVal <= 0) {
                 showStatus('Enter a valid concentration.', true);
@@ -917,21 +1787,17 @@
             state.concValue = concVal;
             state.concUnit = concUnit;
 
-            // 6. Dose rate from DB
             const doseRate = drug.dosage?.[animalId];
             if (doseRate === undefined || doseRate === null) {
                 const animalName = ANIMALS.find(a => a.id === animalId)?.name || animalId;
-                showStatus(`No dosage rule for ${animalName} with ${drug.name}.`, true);
+                showStatus(`⚠️ No dosage data for ${animalName} with ${drug.name}.`, true);
                 return;
             }
 
-            // 7. Step 1: Total mg required
             const totalMg = weight * doseRate;
 
-            // 8. Convert concentration to mg/mL (if percentage)
             let concMgPerMl;
             if (concUnit === 'percent') {
-                // 1% = 10 mg/mL
                 concMgPerMl = concVal * 10;
             } else {
                 concMgPerMl = concVal;
@@ -942,45 +1808,55 @@
                 return;
             }
 
-            // 9. Step 2: Final volume (mL)
             let doseMl = totalMg / concMgPerMl;
 
-            // 10. Display with formatting
-            const animalName = ANIMALS.find(a => a.id === animalId)?.name || animalId;
             let resultUnitStr = 'mL';
             let displayDose = doseMl;
 
-            // If Tablet, show number of tablets (round to nearest practical dose)
             if (form === 'Tablet') {
-                // Tablet strength is essentially the concentration value (mg per tablet)
-                const tabletStrength = concMgPerMl; // because conc is mg per tablet in our data
+                const tabletStrength = concMgPerMl;
                 let tablets = totalMg / tabletStrength;
-                // Round to nearest 0.5 tablet for practical dosing
                 displayDose = Math.round(tablets * 2) / 2;
                 resultUnitStr = displayDose === 1 ? 'tablet' : 'tablets';
             } else {
-                // For liquids, round to 2 decimal places
                 displayDose = Math.round(doseMl * 100) / 100;
                 resultUnitStr = 'mL';
             }
 
-            // 11. Update Result Card
+            const animalName = ANIMALS.find(a => a.id === animalId)?.name || animalId;
+            const animalEmoji = ANIMALS.find(a => a.id === animalId)?.emoji || '🐾';
+            const finalDoseStr = `${displayDose} ${resultUnitStr}`;
+
+            // -- UPDATE UI --
             resultValue.textContent = displayDose;
             resultUnit.textContent = resultUnitStr;
 
-            // Breakdown
             const doseRateDisplay = doseRate % 1 === 0 ? doseRate : doseRate.toFixed(2);
+            rdDoseRate.textContent = `${doseRateDisplay} mg/kg (${animalName})`;
             rdStep1.textContent = `${weight} kg × ${doseRateDisplay} mg/kg = ${totalMg.toFixed(2)} mg`;
 
             let concDisplay = `${concVal}`;
             if (concUnit === 'percent') concDisplay += '%';
             else concDisplay += ' mg/mL';
             rdStep2.textContent = `${totalMg.toFixed(2)} mg ÷ ${concMgPerMl.toFixed(2)} mg/mL = ${doseMl.toFixed(2)} mL`;
-
-            rdFinal.textContent = `${displayDose} ${resultUnitStr}`;
+            rdFinal.textContent = finalDoseStr;
 
             resultCard.classList.add('show');
             statusMsg.classList.remove('show');
+
+            // -- SAVE TO HISTORY --
+            const historyEntry = {
+                animal: animalName,
+                animalEmoji: animalEmoji,
+                weight: weight,
+                drug: drug.name,
+                formulation: form,
+                concentration: concDisplay,
+                doseRate: `${doseRateDisplay} mg/kg`,
+                dose: finalDoseStr,
+                timestamp: new Date().toLocaleString(),
+            };
+            addHistoryEntry(historyEntry);
         }
 
         // ============================================================
@@ -998,6 +1874,32 @@
         function clearResult() {
             resultCard.classList.remove('show');
             statusMsg.classList.remove('show');
+        }
+
+        // ============================================================
+        //  SETTINGS UI
+        // ============================================================
+        function toggleSettings(open) {
+            if (open === undefined) {
+                settingsOverlay.classList.toggle('open');
+            } else if (open) {
+                settingsOverlay.classList.add('open');
+            } else {
+                settingsOverlay.classList.remove('open');
+            }
+            if (settingsOverlay.classList.contains('open')) {
+                renderHistory();
+                renderDrugList();
+            }
+        }
+
+        function switchTab(tabId) {
+            tabBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tabId);
+            });
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            const pane = document.getElementById(`tab-${tabId}`);
+            if (pane) pane.classList.add('active');
         }
 
         // ============================================================
@@ -1054,28 +1956,51 @@
             }
         });
 
+        // Settings
+        settingsToggleBtn.addEventListener('click', () => toggleSettings(true));
+        settingsCloseBtn.addEventListener('click', () => toggleSettings(false));
+        settingsOverlay.addEventListener('click', (e) => {
+            if (e.target === settingsOverlay) toggleSettings(false);
+        });
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                switchTab(btn.dataset.tab);
+            });
+        });
+
+        clearHistoryBtn.addEventListener('click', clearHistory);
+
+        // Drug list
+        addDrugBtn.addEventListener('click', openAddForm);
+        cancelDrugBtn.addEventListener('click', resetAddForm);
+        saveDrugBtn.addEventListener('click', validateAndSaveDrug);
+
         // ============================================================
         //  INIT
         // ============================================================
         function init() {
+            loadHistory();
             renderAnimals();
 
-            // Default: Meloxicam, Injection, 4 mg/ml, Dog, 5kg
-            const defaultDrug = DRUGS[0]; // Meloxicam
-            state.selectedDrug = defaultDrug;
-            drugSearchInput.value = defaultDrug.name;
-            state.selectedFormulation = defaultDrug.formulations[0]; // Injection
-            if (defaultDrug.concMap && defaultDrug.concMap[state.selectedFormulation]) {
-                const c = defaultDrug.concMap[state.selectedFormulation];
-                state.concValue = c.value;
-                state.concUnit = c.unit;
+            // If we have drugs, select the first one
+            if (allDrugs.length > 0) {
+                const defaultDrug = allDrugs[0];
+                state.selectedDrug = defaultDrug;
+                drugSearchInput.value = defaultDrug.name;
+                state.selectedFormulation = defaultDrug.formulations[0];
+                if (defaultDrug.concMap && defaultDrug.concMap[state.selectedFormulation]) {
+                    const c = defaultDrug.concMap[state.selectedFormulation];
+                    state.concValue = c.value;
+                    state.concUnit = c.unit;
+                }
+                renderFormulations();
+                updateConcUI();
             }
-            renderFormulations();
-            updateConcUI();
+
             weightInput.value = 5;
             state.weight = 5;
 
-            // Auto-calculate on load to show result
             setTimeout(() => calculate(), 300);
         }
 
